@@ -18,6 +18,18 @@ public class GlobalExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    // Errores de negocio (vinculo duplicado, recompensa no reclamable...) -> 409
+    @ExceptionHandler(ConflictException.class)
+    public ProblemDetail manejarConflicto(ConflictException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    // Reglas de propiedad / control parental (limite ajeno, limite controlado por el padre...) -> 403
+    @ExceptionHandler(AccesoDenegadoException.class)
+    public ProblemDetail manejarAccesoDenegado(AccesoDenegadoException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail manejarValidacion(MethodArgumentNotValidException ex) {
         Map<String, String> errores = new LinkedHashMap<>();
@@ -32,5 +44,15 @@ public class GlobalExceptionHandler {
     public ProblemDetail manejarIntegridad(DataIntegrityViolationException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
                 "La operación viola una restricción de la base de datos (clave foránea o dato duplicado)");
+    }
+
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    public ProblemDetail manejarCredenciales(org.springframework.security.authentication.BadCredentialsException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Usuario o contraseña incorrectos");
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ProblemDetail manejarArgumentoInvalido(IllegalArgumentException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 }

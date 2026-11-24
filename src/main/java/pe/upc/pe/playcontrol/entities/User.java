@@ -1,29 +1,44 @@
 package pe.upc.pe.playcontrol.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Usuario del sistema (tabla usuario).
+ * estado: ACTIVO / INACTIVO
+ * nivelTecnologia: BASICO / MEDIO / ALTO
+ */
 @Entity
-@Table(name = "users")
+@Table(name = "usuario", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_usuario_username", columnNames = "username"),
+        @UniqueConstraint(name = "uk_usuario_email", columnNames = "email")
+})
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_usuario")
     private Long idUsuario;
 
-    // Campos de Seguridad (Turno 2)
-    @Column(name = "username", nullable = false, unique = true, length = 100)
+    // Campos de seguridad
+    @Column(name = "username", nullable = false, length = 100)
     private String username;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password", nullable = false, length = 255)
     private String password;
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    // Nuevos campos del Turno 1
+    // Datos personales
     @Column(name = "nombre", length = 100)
     private String nombre;
     @Column(name = "apellido", length = 100)
@@ -53,7 +68,8 @@ public class User {
     @Column(name = "configuracion_privacidad", length = 500)
     private String configuracionPrivacidad;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    // Roles (tabla rol_usuario, FK id_usuario)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "id_usuario", nullable = false)
     private List<Authority> roles;
 }

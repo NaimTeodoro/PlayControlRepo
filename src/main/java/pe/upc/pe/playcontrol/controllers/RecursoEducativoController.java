@@ -1,10 +1,10 @@
 package pe.upc.pe.playcontrol.controllers;
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import pe.upc.pe.playcontrol.dtos.RecursoEducativoRequest;
-import pe.upc.pe.playcontrol.dtos.RecursoEducativoResponse;
+import pe.upc.pe.playcontrol.dtos.RecursoEducativoDTO;
 import pe.upc.pe.playcontrol.services.RecursoEducativoService;
 
 import java.util.List;
@@ -13,37 +13,35 @@ import java.util.List;
 @RequestMapping("/api/recursos-educativos")
 public class RecursoEducativoController {
 
-    private final RecursoEducativoService service;
+    @Autowired
+    private RecursoEducativoService service;
 
-    public RecursoEducativoController(RecursoEducativoService service) {
-        this.service = service;
-    }
-
+    /** Filtros opcionales: ?categoria=FAQ y/o ?audiencia=PADRES (sin distinguir mayusculas). */
     @GetMapping
-    public List<RecursoEducativoResponse> listar(@RequestParam(name = "categoria", required = false) String categoria) {
-        return service.listar(categoria);
+    public List<RecursoEducativoDTO> listar(@RequestParam(name = "categoria", required = false) String categoria,
+                                            @RequestParam(name = "audiencia", required = false) String audiencia) {
+        return service.listar(categoria, audiencia);
     }
 
     @GetMapping("/{id}")
-    public RecursoEducativoResponse obtener(@PathVariable("id") Integer id) {
-        return service.obtener(id);
+    public RecursoEducativoDTO buscarPorId(@PathVariable Long id) {
+        return service.buscarPorId(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public RecursoEducativoResponse crear(@Valid @RequestBody RecursoEducativoRequest request) {
-        return service.crear(request);
+    public RecursoEducativoDTO insertar(@Valid @RequestBody RecursoEducativoDTO dto) {
+        return service.insertar(dto);
     }
 
     @PutMapping("/{id}")
-    public RecursoEducativoResponse actualizar(@PathVariable("id") Integer id,
-                                               @Valid @RequestBody RecursoEducativoRequest request) {
-        return service.actualizar(id, request);
+    public RecursoEducativoDTO actualizar(@PathVariable Long id, @Valid @RequestBody RecursoEducativoDTO dto) {
+        return service.actualizar(id, dto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void eliminar(@PathVariable("id") Integer id) {
+    public void eliminar(@PathVariable Long id) {
         service.eliminar(id);
     }
 }

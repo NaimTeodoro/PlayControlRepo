@@ -7,7 +7,9 @@ import pe.upc.pe.playcontrol.entities.RecursoEducativo;
 import java.util.List;
 
 @Repository
-public interface RecursoEducativoRepository extends JpaRepository<RecursoEducativo, Integer> {
+public interface RecursoEducativoRepository extends JpaRepository<RecursoEducativo, Long> {
 
     List<RecursoEducativo> findByCategoriaIgnoreCase(String categoria);
+
+    List<RecursoEducativo> findByAudienciaObjetivoIgnoreCase(String audienciaObjetivo);
 }

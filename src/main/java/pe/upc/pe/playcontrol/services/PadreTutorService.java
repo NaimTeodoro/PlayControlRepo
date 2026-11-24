@@ -1,20 +1,14 @@
 package pe.upc.pe.playcontrol.services;
 
-import java.util.List;
 import pe.upc.pe.playcontrol.dtos.PadreTutorDTO;
+
+import java.util.List;
 
 public interface PadreTutorService {
     List<PadreTutorDTO> listar();
-
     PadreTutorDTO buscarPorId(Long id);
-
     PadreTutorDTO insertar(PadreTutorDTO dto);
-
     PadreTutorDTO actualizar(Long id, PadreTutorDTO dto);
-
     void eliminar(Long id);
-
-    List<PadreTutorDTO> buscarPorUsuario(Long idUsuario);
-
-    List<PadreTutorDTO> buscarPorNivelTecnologia(String nivel);
+    PadreTutorDTO buscarPorUsuario(Long idUsuario);
 }

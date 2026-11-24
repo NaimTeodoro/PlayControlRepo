@@ -1,64 +1,68 @@
 package pe.upc.pe.playcontrol.controllers;
 
-import java.util.List;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import pe.upc.pe.playcontrol.dtos.AlertaJuegoDTO;
+import pe.upc.pe.playcontrol.dtos.ResponderAlertaDTO;
 import pe.upc.pe.playcontrol.services.AlertaJuegoService;
 
+import java.util.List;
+
 @RestController
-@RequestMapping({"/api/alertas-juego"})
+@RequestMapping("/api/alertas-juego")
 public class AlertaJuegoController {
+
     @Autowired
     private AlertaJuegoService service;
 
-    public AlertaJuegoController() {
-    }
-
     @GetMapping
     public List<AlertaJuegoDTO> listar() {
-        return this.service.listar();
+        return service.listar();
     }
 
-    @GetMapping({"/{id}"})
+    @GetMapping("/{id}")
     public AlertaJuegoDTO buscarPorId(@PathVariable Long id) {
-        return this.service.buscarPorId(id);
+        return service.buscarPorId(id);
     }
 
     @PostMapping
-    public AlertaJuegoDTO insertar(@RequestBody AlertaJuegoDTO dto) {
-        return this.service.insertar(dto);
+    @ResponseStatus(HttpStatus.CREATED)
+    public AlertaJuegoDTO insertar(@Valid @RequestBody AlertaJuegoDTO dto) {
+        return service.insertar(dto);
     }
 
-    @PutMapping({"/{id}"})
-    public AlertaJuegoDTO actualizar(@PathVariable Long id, @RequestBody AlertaJuegoDTO dto) {
-        return this.service.actualizar(id, dto);
+    @PutMapping("/{id}")
+    public AlertaJuegoDTO actualizar(@PathVariable Long id, @Valid @RequestBody AlertaJuegoDTO dto) {
+        return service.actualizar(id, dto);
     }
 
-    @DeleteMapping({"/{id}"})
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminar(@PathVariable Long id) {
-        this.service.eliminar(id);
+        service.eliminar(id);
     }
 
-    @GetMapping({"/usuario/{idUsuario}"})
+    @GetMapping("/usuario/{idUsuario}")
     public List<AlertaJuegoDTO> buscarPorUsuario(@PathVariable Long idUsuario) {
-        return this.service.buscarPorUsuario(idUsuario);
+        return service.buscarPorUsuario(idUsuario);
     }
 
-    @GetMapping({"/usuario/{idUsuario}/pendientes"})
+    /** Alertas sin responder (respondidoUsuario = false). */
+    @GetMapping("/usuario/{idUsuario}/pendientes")
     public List<AlertaJuegoDTO> buscarPendientes(@PathVariable Long idUsuario) {
-        return this.service.buscarPendientesPorUsuario(idUsuario);
+        return service.buscarPendientesPorUsuario(idUsuario);
     }
 
-    @GetMapping({"/usuario/{idUsuario}/contar/{tipo}"})
+    @GetMapping("/usuario/{idUsuario}/contar/{tipo}")
     public Long contarPorTipo(@PathVariable Long idUsuario, @PathVariable String tipo) {
-        return this.service.contarPorUsuarioYTipo(idUsuario, tipo);
+        return service.contarPorUsuarioYTipo(idUsuario, tipo);
+    }
+
+    /** Body {respuestaUsuario}. Marca RESPONDIDA y calcula tiempoRespuesta (minutos desde fechaEnvio). 409 si ya fue respondida. */
+    @PutMapping("/{id}/responder")
+    public AlertaJuegoDTO responder(@PathVariable Long id, @Valid @RequestBody ResponderAlertaDTO dto) {
+        return service.responder(id, dto);
     }
 }

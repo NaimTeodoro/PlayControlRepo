@@ -1,59 +1,74 @@
 package pe.upc.pe.playcontrol.controllers;
 
-import java.util.List;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import pe.upc.pe.playcontrol.dtos.PadreHijoDTO;
+import pe.upc.pe.playcontrol.dtos.VincularDTO;
 import pe.upc.pe.playcontrol.services.PadreHijoService;
 
+import java.util.List;
+
 @RestController
-@RequestMapping({"/api/padre-hijo"})
+@RequestMapping("/api/padre-hijo")
 public class PadreHijoController {
+
     @Autowired
     private PadreHijoService service;
 
-    public PadreHijoController() {
-    }
-
     @GetMapping
     public List<PadreHijoDTO> listar() {
-        return this.service.listar();
+        return service.listar();
     }
 
-    @GetMapping({"/{id}"})
+    @GetMapping("/{id}")
     public PadreHijoDTO buscarPorId(@PathVariable Long id) {
-        return this.service.buscarPorId(id);
+        return service.buscarPorId(id);
     }
 
     @PostMapping
-    public PadreHijoDTO insertar(@RequestBody PadreHijoDTO dto) {
-        return this.service.insertar(dto);
+    @ResponseStatus(HttpStatus.CREATED)
+    public PadreHijoDTO insertar(@Valid @RequestBody PadreHijoDTO dto) {
+        return service.insertar(dto);
     }
 
-    @PutMapping({"/{id}"})
-    public PadreHijoDTO actualizar(@PathVariable Long id, @RequestBody PadreHijoDTO dto) {
-        return this.service.actualizar(id, dto);
+    @PutMapping("/{id}")
+    public PadreHijoDTO actualizar(@PathVariable Long id, @Valid @RequestBody PadreHijoDTO dto) {
+        return service.actualizar(id, dto);
     }
 
-    @DeleteMapping({"/{id}"})
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminar(@PathVariable Long id) {
-        this.service.eliminar(id);
+        service.eliminar(id);
     }
 
-    @GetMapping({"/padre/{idPadre}"})
-    public List<PadreHijoDTO> buscarHijosPorPadre(@PathVariable Long idPadre) {
-        return this.service.buscarHijosPorPadre(idPadre);
+    /** Hijos de un padre/tutor (con nombre, username y codigo de vinculacion del hijo). */
+    @GetMapping("/padre/{idPadreTutor}")
+    public List<PadreHijoDTO> buscarPorPadre(@PathVariable Long idPadreTutor) {
+        return service.buscarPorPadre(idPadreTutor);
     }
 
-    @GetMapping({"/joven/{idJoven}/estado/{estado}"})
-    public List<PadreHijoDTO> buscarPorJovenYEstado(@PathVariable Long idJoven, @PathVariable String estado) {
-        return this.service.buscarPorJovenYEstado(idJoven, estado);
+    /** Padres/tutores vinculados a un jugador (el hijo ve aqui las solicitudes PENDIENTE). */
+    @GetMapping("/joven/{idJugadorJoven}")
+    public List<PadreHijoDTO> buscarPorJoven(@PathVariable Long idJugadorJoven) {
+        return service.buscarPorJoven(idJugadorJoven);
+    }
+
+    /**
+     * El padre ingresa el codigo de vinculacion del hijo. Crea el vinculo PENDIENTE (autorizado=false).
+     * 404 si el codigo no existe; 409 si ya estan vinculados.
+     */
+    @PostMapping("/vincular")
+    @ResponseStatus(HttpStatus.CREATED)
+    public PadreHijoDTO vincular(@Valid @RequestBody VincularDTO dto) {
+        return service.vincular(dto);
+    }
+
+    /** El hijo (dueño del vinculo PENDIENTE) o ADMIN autoriza el vinculo: estado ACTIVO, autorizado=true. El padre recibe 403. */
+    @PutMapping("/{id}/autorizar")
+    public PadreHijoDTO autorizar(@PathVariable Long id) {
+        return service.autorizar(id);
     }
 }

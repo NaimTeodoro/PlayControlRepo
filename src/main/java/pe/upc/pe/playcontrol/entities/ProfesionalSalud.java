@@ -1,19 +1,32 @@
 package pe.upc.pe.playcontrol.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
+/**
+ * Perfil de profesional de salud (1 a 1 con usuario).
+ * estado: ACTIVO / INACTIVO / PENDIENTE
+ */
 @Entity
-@Table(name = "profesional_salud")
+@Table(name = "profesional_salud", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_profesional_salud_usuario", columnNames = "id_usuario")
+})
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class ProfesionalSalud {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_profesional")
-    private Integer idProfesional;
+    private Long idProfesional;
 
-    @Column(name = "id_usuario", nullable = false)
-    private Integer idUsuario;
+    @OneToOne
+    @JoinColumn(name = "id_usuario", nullable = false)
+    private User usuario;
 
     @Column(name = "especialidad", length = 150, nullable = false)
     private String especialidad;
@@ -47,111 +60,4 @@ public class ProfesionalSalud {
 
     @Column(name = "estado", length = 20, nullable = false)
     private String estado;
-
-    public ProfesionalSalud() {
-    }
-
-    public Integer getIdProfesional() {
-        return idProfesional;
-    }
-
-    public void setIdProfesional(Integer idProfesional) {
-        this.idProfesional = idProfesional;
-    }
-
-    public Integer getIdUsuario() {
-        return idUsuario;
-    }
-
-    public void setIdUsuario(Integer idUsuario) {
-        this.idUsuario = idUsuario;
-    }
-
-    public String getEspecialidad() {
-        return especialidad;
-    }
-
-    public void setEspecialidad(String especialidad) {
-        this.especialidad = especialidad;
-    }
-
-    public String getNumeroLicencia() {
-        return numeroLicencia;
-    }
-
-    public void setNumeroLicencia(String numeroLicencia) {
-        this.numeroLicencia = numeroLicencia;
-    }
-
-    public String getInstitucion() {
-        return institucion;
-    }
-
-    public void setInstitucion(String institucion) {
-        this.institucion = institucion;
-    }
-
-    public Integer getAniosExperiencia() {
-        return aniosExperiencia;
-    }
-
-    public void setAniosExperiencia(Integer aniosExperiencia) {
-        this.aniosExperiencia = aniosExperiencia;
-    }
-
-    public String getAreaTrabajo() {
-        return areaTrabajo;
-    }
-
-    public void setAreaTrabajo(String areaTrabajo) {
-        this.areaTrabajo = areaTrabajo;
-    }
-
-    public String getCertificaciones() {
-        return certificaciones;
-    }
-
-    public void setCertificaciones(String certificaciones) {
-        this.certificaciones = certificaciones;
-    }
-
-    public String getTelefonoConsulta() {
-        return telefonoConsulta;
-    }
-
-    public void setTelefonoConsulta(String telefonoConsulta) {
-        this.telefonoConsulta = telefonoConsulta;
-    }
-
-    public String getHorarioConsulta() {
-        return horarioConsulta;
-    }
-
-    public void setHorarioConsulta(String horarioConsulta) {
-        this.horarioConsulta = horarioConsulta;
-    }
-
-    public String getVerificadoPor() {
-        return verificadoPor;
-    }
-
-    public void setVerificadoPor(String verificadoPor) {
-        this.verificadoPor = verificadoPor;
-    }
-
-    public LocalDateTime getFechaVerificacion() {
-        return fechaVerificacion;
-    }
-
-    public void setFechaVerificacion(LocalDateTime fechaVerificacion) {
-        this.fechaVerificacion = fechaVerificacion;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
 }

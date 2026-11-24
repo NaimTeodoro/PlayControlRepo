@@ -1,8 +1,8 @@
 package pe.upc.pe.playcontrol.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.upc.pe.playcontrol.dtos.PlataformaDTO;
 import pe.upc.pe.playcontrol.services.PlataformaService;
@@ -16,34 +16,30 @@ public class PlataformaController {
     @Autowired
     private PlataformaService plataformaService;
 
-    @PostMapping
-    public ResponseEntity<PlataformaDTO> registrar(@RequestBody PlataformaDTO request) {
-        PlataformaDTO response = plataformaService.registrar(request);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
     @GetMapping
-    public ResponseEntity<List<PlataformaDTO>> listar() {
-        List<PlataformaDTO> response = plataformaService.listar();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public List<PlataformaDTO> listar() {
+        return plataformaService.listar();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PlataformaDTO> obtenerPorId(@PathVariable Long id) {
-        PlataformaDTO response = plataformaService.obtenerPorId(id);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public PlataformaDTO buscarPorId(@PathVariable Long id) {
+        return plataformaService.buscarPorId(id);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public PlataformaDTO insertar(@Valid @RequestBody PlataformaDTO dto) {
+        return plataformaService.insertar(dto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PlataformaDTO> actualizar(@PathVariable Long id, @RequestBody PlataformaDTO request) {
-        request.setIdPlataforma(id);
-        PlataformaDTO response = plataformaService.actualizar(request);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public PlataformaDTO actualizar(@PathVariable Long id, @Valid @RequestBody PlataformaDTO dto) {
+        return plataformaService.actualizar(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminar(@PathVariable Long id) {
         plataformaService.eliminar(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

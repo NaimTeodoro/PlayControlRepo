@@ -1,6 +1,7 @@
 package pe.upc.pe.playcontrol;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -13,9 +14,13 @@ public class PlayControlApplication {
     }
 
 
+    // STRICT: solo mapea propiedades con el mismo nombre. Las relaciones (idUsuario, idLogro...) se mapean a mano
+    // en cada servicio; asi ModelMapper no "adivina" rutas ambiguas como usuario.idUsuario vs creadoPor.idUsuario.
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        return mapper;
     }
 
 }

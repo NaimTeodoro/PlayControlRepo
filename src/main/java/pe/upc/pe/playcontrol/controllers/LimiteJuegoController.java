@@ -1,59 +1,68 @@
 package pe.upc.pe.playcontrol.controllers;
 
-import java.util.List;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 import pe.upc.pe.playcontrol.dtos.LimiteJuegoDTO;
 import pe.upc.pe.playcontrol.services.LimiteJuegoService;
+import pe.upc.pe.playcontrol.services.UserService;
+
+import java.util.List;
 
 @RestController
-@RequestMapping({"/api/limites-juego"})
+@RequestMapping("/api/limites-juego")
 public class LimiteJuegoController {
+
     @Autowired
     private LimiteJuegoService service;
 
-    public LimiteJuegoController() {
-    }
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     public List<LimiteJuegoDTO> listar() {
-        return this.service.listar();
+        return service.listar();
     }
 
-    @GetMapping({"/{id}"})
+    @GetMapping("/{id}")
     public LimiteJuegoDTO buscarPorId(@PathVariable Long id) {
-        return this.service.buscarPorId(id);
+        return service.buscarPorId(id);
     }
 
+    /** Si no se envia idCreadoPor se usa el usuario autenticado. Al guardar uno ACTIVO, los demas pasan a INACTIVO. */
     @PostMapping
-    public LimiteJuegoDTO insertar(@RequestBody LimiteJuegoDTO dto) {
-        return this.service.insertar(dto);
+    @ResponseStatus(HttpStatus.CREATED)
+    public LimiteJuegoDTO insertar(@Valid @RequestBody LimiteJuegoDTO dto, Authentication authentication) {
+        completarCreadoPor(dto, authentication);
+        return service.insertar(dto);
     }
 
-    @PutMapping({"/{id}"})
-    public LimiteJuegoDTO actualizar(@PathVariable Long id, @RequestBody LimiteJuegoDTO dto) {
-        return this.service.actualizar(id, dto);
+    @PutMapping("/{id}")
+    public LimiteJuegoDTO actualizar(@PathVariable Long id, @Valid @RequestBody LimiteJuegoDTO dto) {
+        return service.actualizar(id, dto);
     }
 
-    @DeleteMapping({"/{id}"})
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminar(@PathVariable Long id) {
-        this.service.eliminar(id);
+        service.eliminar(id);
     }
 
-    @GetMapping({"/usuario/{idUsuario}"})
+    @GetMapping("/usuario/{idUsuario}")
     public List<LimiteJuegoDTO> buscarPorUsuario(@PathVariable Long idUsuario) {
-        return this.service.buscarPorUsuario(idUsuario);
+        return service.buscarPorUsuario(idUsuario);
     }
 
-    @GetMapping({"/usuario/{idUsuario}/activos"})
+    @GetMapping("/usuario/{idUsuario}/activos")
     public List<LimiteJuegoDTO> buscarActivos(@PathVariable Long idUsuario) {
-        return this.service.buscarActivosPorUsuario(idUsuario);
+        return service.buscarActivosPorUsuario(idUsuario);
+    }
+
+    private void completarCreadoPor(LimiteJuegoDTO dto, Authentication authentication) {
+        if (dto.getIdCreadoPor() == null && authentication != null) {
+            dto.setIdCreadoPor(userService.obtenerActual(authentication.getName()).getIdUsuario());
+        }
     }
 }

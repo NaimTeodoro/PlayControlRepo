@@ -1,12 +1,13 @@
 package pe.upc.pe.playcontrol.services;
 
 import pe.upc.pe.playcontrol.dtos.PlataformaDTO;
+
 import java.util.List;
 
 public interface PlataformaService {
-    PlataformaDTO registrar(PlataformaDTO request);
     List<PlataformaDTO> listar();
-    PlataformaDTO obtenerPorId(Long id);
-    PlataformaDTO actualizar(PlataformaDTO request);
+    PlataformaDTO buscarPorId(Long id);
+    PlataformaDTO insertar(PlataformaDTO dto);
+    PlataformaDTO actualizar(Long id, PlataformaDTO dto);
     void eliminar(Long id);
 }

@@ -1,7 +1,8 @@
 package pe.upc.pe.playcontrol.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pe.upc.pe.playcontrol.dtos.DispositivoDTO;
 import pe.upc.pe.playcontrol.services.DispositivoService;
@@ -21,24 +22,25 @@ public class DispositivoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DispositivoDTO> obtenerPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(dispositivoService.obtenerPorId(id));
+    public DispositivoDTO buscarPorId(@PathVariable Long id) {
+        return dispositivoService.buscarPorId(id);
     }
 
     @PostMapping
-    public ResponseEntity<DispositivoDTO> registrar(@RequestBody DispositivoDTO dto) {
-        return ResponseEntity.ok(dispositivoService.registrar(dto));
+    @ResponseStatus(HttpStatus.CREATED)
+    public DispositivoDTO insertar(@Valid @RequestBody DispositivoDTO dto) {
+        return dispositivoService.insertar(dto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DispositivoDTO> actualizar(@PathVariable Long id, @RequestBody DispositivoDTO dto) {
-        return ResponseEntity.ok(dispositivoService.actualizar(id, dto));
+    public DispositivoDTO actualizar(@PathVariable Long id, @Valid @RequestBody DispositivoDTO dto) {
+        return dispositivoService.actualizar(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminar(@PathVariable Long id) {
         dispositivoService.eliminar(id);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/usuario/{idUsuario}")

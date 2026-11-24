@@ -7,5 +7,8 @@ public class UserRegisterDTO {
     private String username;
     private String password;
     private String email;
-    private String rol; // Ejemplo: "ROLE_USER" o "ROLE_ADMIN"
+    private String nombre;
+    private String apellido;
+    // Valores permitidos: ROLE_JUGADOR, ROLE_PADRE, ROLE_PROFESIONAL (por defecto ROLE_JUGADOR)
+    private String rol;
 }

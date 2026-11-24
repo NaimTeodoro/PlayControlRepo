@@ -1,23 +1,36 @@
 package pe.upc.pe.playcontrol.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
+/**
+ * Relacion profesional de salud - jugador joven (paciente).
+ * estado: ACTIVO / INACTIVO / PENDIENTE
+ */
 @Entity
-@Table(name = "profesional_cliente")
+@Table(name = "profesional_cliente", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_profesional_cliente", columnNames = {"id_profesional", "id_jugador_joven"})
+})
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class ProfesionalCliente {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_profesional_cliente")
-    private Integer idProfesionalCliente;
+    private Long idProfesionalCliente;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "id_profesional", nullable = false)
     private ProfesionalSalud profesional;
 
-    @Column(name = "id_jugador_joven", nullable = false)
-    private Integer idJugadorJoven;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_jugador_joven", nullable = false)
+    private JugadorJoven jugadorJoven;
 
     @Column(name = "fecha_asociacion", nullable = false)
     private LocalDateTime fechaAsociacion;
@@ -39,87 +52,4 @@ public class ProfesionalCliente {
 
     @Column(name = "notas", columnDefinition = "TEXT")
     private String notas;
-
-    public ProfesionalCliente() {
-    }
-
-    public Integer getIdProfesionalCliente() {
-        return idProfesionalCliente;
-    }
-
-    public void setIdProfesionalCliente(Integer idProfesionalCliente) {
-        this.idProfesionalCliente = idProfesionalCliente;
-    }
-
-    public ProfesionalSalud getProfesional() {
-        return profesional;
-    }
-
-    public void setProfesional(ProfesionalSalud profesional) {
-        this.profesional = profesional;
-    }
-
-    public Integer getIdJugadorJoven() {
-        return idJugadorJoven;
-    }
-
-    public void setIdJugadorJoven(Integer idJugadorJoven) {
-        this.idJugadorJoven = idJugadorJoven;
-    }
-
-    public LocalDateTime getFechaAsociacion() {
-        return fechaAsociacion;
-    }
-
-    public void setFechaAsociacion(LocalDateTime fechaAsociacion) {
-        this.fechaAsociacion = fechaAsociacion;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public String getDiagnostico() {
-        return diagnostico;
-    }
-
-    public void setDiagnostico(String diagnostico) {
-        this.diagnostico = diagnostico;
-    }
-
-    public String getPlanTratamiento() {
-        return planTratamiento;
-    }
-
-    public void setPlanTratamiento(String planTratamiento) {
-        this.planTratamiento = planTratamiento;
-    }
-
-    public String getFrecuenciaConsulta() {
-        return frecuenciaConsulta;
-    }
-
-    public void setFrecuenciaConsulta(String frecuenciaConsulta) {
-        this.frecuenciaConsulta = frecuenciaConsulta;
-    }
-
-    public LocalDateTime getProximaConsulta() {
-        return proximaConsulta;
-    }
-
-    public void setProximaConsulta(LocalDateTime proximaConsulta) {
-        this.proximaConsulta = proximaConsulta;
-    }
-
-    public String getNotas() {
-        return notas;
-    }
-
-    public void setNotas(String notas) {
-        this.notas = notas;
-    }
 }

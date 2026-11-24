@@ -1,17 +1,29 @@
 package pe.upc.pe.playcontrol.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Recurso educativo (articulos, videos, guias y FAQ).
+ * tipoRecurso: ARTICULO / VIDEO / GUIA / FAQ
+ * audienciaObjetivo: PADRES / JUGADORES / PROFESIONALES / TODOS
+ * nivelDificultad: BASICO / INTERMEDIO / AVANZADO
+ */
 @Entity
 @Table(name = "recurso_educativo")
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class RecursoEducativo {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_recurso")
-    private Integer idRecurso;
+    private Long idRecurso;
 
     @Column(name = "titulo", length = 300, nullable = false)
     private String titulo;
@@ -19,7 +31,7 @@ public class RecursoEducativo {
     @Column(name = "descripcion", columnDefinition = "TEXT")
     private String descripcion;
 
-    @Column(name = "contenido", length = 300)
+    @Column(name = "contenido", columnDefinition = "TEXT")
     private String contenido;
 
     @Column(name = "tipo_recurso", length = 50)
@@ -66,159 +78,4 @@ public class RecursoEducativo {
 
     @Column(name = "valoracion", precision = 3, scale = 2)
     private BigDecimal valoracion;
-
-    public RecursoEducativo() {
-    }
-
-    public Integer getIdRecurso() {
-        return idRecurso;
-    }
-
-    public void setIdRecurso(Integer idRecurso) {
-        this.idRecurso = idRecurso;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public String getContenido() {
-        return contenido;
-    }
-
-    public void setContenido(String contenido) {
-        this.contenido = contenido;
-    }
-
-    public String getTipoRecurso() {
-        return tipoRecurso;
-    }
-
-    public void setTipoRecurso(String tipoRecurso) {
-        this.tipoRecurso = tipoRecurso;
-    }
-
-    public String getFormato() {
-        return formato;
-    }
-
-    public void setFormato(String formato) {
-        this.formato = formato;
-    }
-
-    public Integer getDuracionMinutos() {
-        return duracionMinutos;
-    }
-
-    public void setDuracionMinutos(Integer duracionMinutos) {
-        this.duracionMinutos = duracionMinutos;
-    }
-
-    public String getAudienciaObjetivo() {
-        return audienciaObjetivo;
-    }
-
-    public void setAudienciaObjetivo(String audienciaObjetivo) {
-        this.audienciaObjetivo = audienciaObjetivo;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
-
-    public String getSubcategoria() {
-        return subcategoria;
-    }
-
-    public void setSubcategoria(String subcategoria) {
-        this.subcategoria = subcategoria;
-    }
-
-    public String getNivelDificultad() {
-        return nivelDificultad;
-    }
-
-    public void setNivelDificultad(String nivelDificultad) {
-        this.nivelDificultad = nivelDificultad;
-    }
-
-    public String getUrlRecurso() {
-        return urlRecurso;
-    }
-
-    public void setUrlRecurso(String urlRecurso) {
-        this.urlRecurso = urlRecurso;
-    }
-
-    public String getUrlImagen() {
-        return urlImagen;
-    }
-
-    public void setUrlImagen(String urlImagen) {
-        this.urlImagen = urlImagen;
-    }
-
-    public String getAutor() {
-        return autor;
-    }
-
-    public void setAutor(String autor) {
-        this.autor = autor;
-    }
-
-    public LocalDateTime getFechaPublicacion() {
-        return fechaPublicacion;
-    }
-
-    public void setFechaPublicacion(LocalDateTime fechaPublicacion) {
-        this.fechaPublicacion = fechaPublicacion;
-    }
-
-    public LocalDateTime getFechaActualizacion() {
-        return fechaActualizacion;
-    }
-
-    public void setFechaActualizacion(LocalDateTime fechaActualizacion) {
-        this.fechaActualizacion = fechaActualizacion;
-    }
-
-    public Boolean getActivo() {
-        return activo;
-    }
-
-    public void setActivo(Boolean activo) {
-        this.activo = activo;
-    }
-
-    public Integer getVisitas() {
-        return visitas;
-    }
-
-    public void setVisitas(Integer visitas) {
-        this.visitas = visitas;
-    }
-
-    public BigDecimal getValoracion() {
-        return valoracion;
-    }
-
-    public void setValoracion(BigDecimal valoracion) {
-        this.valoracion = valoracion;
-    }
 }

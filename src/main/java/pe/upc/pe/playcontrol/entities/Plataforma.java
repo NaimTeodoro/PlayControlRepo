@@ -1,16 +1,25 @@
 package pe.upc.pe.playcontrol.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
+/**
+ * Plataforma de juego.
+ * tipo: PC / CONSOLA / MOVIL
+ */
 @Entity
-@Table(name = "plataformas")
+@Table(name = "plataforma")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class Plataforma {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_plataforma")
     private Long idPlataforma;
 
     @Column(name = "nombre_plataforma", nullable = false, length = 100)
