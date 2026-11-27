@@ -1,0 +1,45 @@
+.cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cabecera .titulo-seccion {
+  margin: 32px 0 16px;
+}
+
+.genero {
+  display: block;
+  color: var(--texto-suave);
+}
+
+.respeto {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.respeto.si {
+  color: var(--verde-texto);
+}
+
+.respeto.no {
+  color: var(--rojo);
+}
+
+.bienestar {
+  display: inline-flex;
+  gap: 4px;
+  color: var(--azul);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}

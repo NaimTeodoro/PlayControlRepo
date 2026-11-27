@@ -1,0 +1,104 @@
+.pagina-detalle {
+  max-width: 1000px;
+}
+
+.cabecera {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+}
+
+.cabecera h2 {
+  margin-bottom: 6px;
+}
+
+.cabecera .chip-estado {
+  margin-right: 6px;
+}
+
+.proxima {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: var(--radio-sm);
+  background: var(--azul);
+  color: var(--blanco);
+}
+
+.proxima mat-icon {
+  color: var(--verde);
+}
+
+.proxima small {
+  display: block;
+  opacity: 0.8;
+}
+
+.bloques {
+  margin-top: 24px;
+  gap: 16px;
+}
+
+.bloque {
+  padding: 20px 24px;
+}
+
+.bloque h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.bloque p {
+  margin: 0;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+@media (max-width: 767.98px) {
+  .cabecera {
+    flex-wrap: wrap;
+  }
+
+  .proxima {
+    margin-left: 0;
+  }
+}
+
+.limite {
+  margin-top: 16px;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lista-mini {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lista-mini li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--gris);
+}
+
+.lista-mini li:last-child {
+  border-bottom: 0;
+}
+
+.lista-mini small {
+  display: block;
+  opacity: 0.7;
+}

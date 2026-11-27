@@ -1,0 +1,124 @@
+<div class="pagina pagina-detalle">
+  <header class="encabezado-pagina">
+    <a mat-icon-button routerLink="/alertas" aria-label="Volver a alertas"
+      ><mat-icon>arrow_back</mat-icon></a
+    >
+    <div>
+      <h1>Detalle de la alerta</h1>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else if (alerta(); as a) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="cabecera">
+        <span class="icono-seccion"
+          ><mat-icon>{{ infoTipo(a.tipoAlerta).icono }}</mat-icon></span
+        >
+        <div>
+          <h2>{{ infoTipo(a.tipoAlerta).etiqueta }}</h2>
+          <span [class]="'chip-estado ' + claseIntensidad(a.intensidad)"
+            >Intensidad {{ a.intensidad ?? '—' }}</span
+          >
+          @if (esPendiente(a)) {
+            <span class="chip-estado alerta">Pendiente</span>
+          } @else {
+            <span class="chip-estado exito">Respondida</span>
+          }
+        </div>
+      </div>
+
+      <p class="mensaje">{{ a.mensaje }}</p>
+
+      <dl class="datos">
+        <div>
+          <dt>Acción sugerida</dt>
+          <dd>{{ a.accionSugerida ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Fecha de envío</dt>
+          <dd>{{ a.fechaEnvio | date: 'dd/MM/yyyy HH:mm' }}</dd>
+        </div>
+        <div>
+          <dt>Tiempo transcurrido</dt>
+          <dd>{{ a.tiempoTranscurrido != null ? a.tiempoTranscurrido + ' min' : '—' }}</dd>
+        </div>
+        <div>
+          <dt>Límite alcanzado</dt>
+          <dd>{{ a.limiteAlcanzado != null ? a.limiteAlcanzado + ' h' : '—' }}</dd>
+        </div>
+        <div>
+          <dt>Tu respuesta</dt>
+          <dd>{{ a.respuestaUsuario ?? 'Sin responder' }}</dd>
+        </div>
+        <div>
+          <dt>Tiempo en responder</dt>
+          <dd>{{ a.tiempoRespuesta != null ? a.tiempoRespuesta + ' min' : '—' }}</dd>
+        </div>
+      </dl>
+
+      @if (esPendiente(a)) {
+        <form [formGroup]="form" (ngSubmit)="responder(a)" novalidate class="respuesta">
+          <mat-form-field appearance="outline">
+            <mat-label>Tu respuesta</mat-label>
+            <textarea matInput rows="2" formControlName="respuestaUsuario"></textarea>
+            @if (form.controls.respuestaUsuario.hasError('required')) {
+              <mat-error>Escribe una respuesta</mat-error>
+            } @else if (form.controls.respuestaUsuario.hasError('maxlength')) {
+              <mat-error>Máximo 500 caracteres</mat-error>
+            }
+          </mat-form-field>
+          <div class="botones">
+            <button mat-flat-button class="boton-verde" type="submit" [disabled]="respondiendo()">
+              <mat-icon>done</mat-icon> Responder alerta
+            </button>
+          </div>
+        </form>
+      }
+    </mat-card>
+
+    <h2 class="titulo-seccion"><mat-icon>history</mat-icon> Historial</h2>
+    <mat-card class="tarjeta historial" appearance="outlined">
+      @for (h of historial(); track h.idHistorial) {
+        <div class="item-historial">
+          <mat-icon>event_note</mat-icon>
+          <div>
+            <strong>{{ h.fecha | date: 'dd/MM/yyyy HH:mm' }}</strong>
+            <p>{{ h.descripcion }}</p>
+            @if (h.accionRealizada) {
+              <span class="chip-estado">{{ h.accionRealizada }}</span>
+            }
+            @if (h.impactoEnSesion) {
+              <small>{{ h.impactoEnSesion }}</small>
+            }
+          </div>
+        </div>
+      } @empty {
+        <div class="estado-vacio">
+          <mat-icon>history_toggle_off</mat-icon>
+          <span>Esta alerta todavía no tiene historial.</span>
+        </div>
+      }
+    </mat-card>
+  } @else {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio">
+        <mat-icon>search_off</mat-icon>
+        <strong>No se encontró la alerta</strong>
+        <a mat-stroked-button routerLink="/alertas">Volver a alertas</a>
+      </div>
+    </mat-card>
+  }
+</div>

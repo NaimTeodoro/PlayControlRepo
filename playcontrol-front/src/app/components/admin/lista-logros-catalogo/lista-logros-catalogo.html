@@ -1,0 +1,129 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>emoji_events</mat-icon></span>
+    <div>
+      <h1>Catálogo de logros</h1>
+      <p>Metas de juego saludable que los jugadores pueden cumplir para ganar puntos.</p>
+    </div>
+    <div class="acciones">
+      <a mat-flat-button class="boton-verde" routerLink="/logros-catalogo/nuevo"
+        ><mat-icon>add</mat-icon> Nuevo logro</a
+      >
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else {
+    <mat-form-field appearance="outline" class="buscador" subscriptSizing="dynamic">
+      <mat-label>Buscar logro</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [value]="busqueda()" (input)="buscar($event)" />
+    </mat-form-field>
+
+    <div class="tabla-contenedor">
+      @if (filtrados().length === 0) {
+        <div class="estado-vacio">
+          <mat-icon>emoji_events</mat-icon>
+          <strong>No hay datos</strong>
+          <span>No hay logros en el catálogo con ese filtro.</span>
+        </div>
+      } @else {
+        <div class="scroll-x">
+          <table mat-table [dataSource]="datos">
+            <ng-container matColumnDef="logro">
+              <th mat-header-cell *matHeaderCellDef>Logro</th>
+              <td mat-cell *matCellDef="let l">
+                <span class="logro">
+                  <span class="imagen" aria-hidden="true">
+                    @if (l.imagenUrl && !imagenesRotas().has(l.idLogro)) {
+                      <img
+                        [src]="l.imagenUrl"
+                        alt=""
+                        loading="lazy"
+                        (error)="imagenRota(l.idLogro)"
+                      />
+                    } @else {
+                      <mat-icon>emoji_events</mat-icon>
+                    }
+                  </span>
+                  <span>
+                    <strong>{{ l.nombreLogro }}</strong>
+                    <small>{{ l.descripcion ?? '—' }}</small>
+                  </span>
+                </span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="tipo">
+              <th mat-header-cell *matHeaderCellDef>Tipo</th>
+              <td mat-cell *matCellDef="let l">
+                <span class="chip-estado">{{ tipo(l) }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="condicion">
+              <th mat-header-cell *matHeaderCellDef>Condición</th>
+              <td mat-cell *matCellDef="let l">{{ condicion(l) }}</td>
+            </ng-container>
+            <ng-container matColumnDef="puntos">
+              <th mat-header-cell *matHeaderCellDef>Puntos</th>
+              <td mat-cell *matCellDef="let l">
+                <span class="puntos">{{ l.puntosAsignados }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="estado">
+              <th mat-header-cell *matHeaderCellDef>Estado</th>
+              <td mat-cell *matCellDef="let l">
+                <span class="chip-estado" [class.exito]="l.activo">{{
+                  l.activo ? 'Activo' : 'Inactivo'
+                }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef>
+                <span class="visually-hidden">Acciones</span>
+              </th>
+              <td mat-cell *matCellDef="let l">
+                <div class="acciones-fila">
+                  <a
+                    mat-icon-button
+                    [routerLink]="['/logros-catalogo/editar', l.idLogro]"
+                    aria-label="Editar logro"
+                    matTooltip="Editar"
+                    ><mat-icon>edit</mat-icon></a
+                  >
+                  <button
+                    mat-icon-button
+                    (click)="eliminar(l)"
+                    aria-label="Eliminar logro"
+                    matTooltip="Eliminar"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+            <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
+          </table>
+        </div>
+      }
+      <mat-paginator
+        [pageSizeOptions]="[10, 25, 50]"
+        [pageSize]="10"
+        [hidden]="filtrados().length === 0"
+        aria-label="Paginación de logros"
+      />
+    </div>
+  }
+</div>

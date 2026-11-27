@@ -1,0 +1,220 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>assessment</mat-icon></span>
+    <div>
+      <h1>Reportes</h1>
+      <p>Resúmenes semanales y mensuales del tiempo de juego de tus hijos.</p>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else if (idPadreTutor === null) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio">
+        <mat-icon>person_off</mat-icon>
+        <strong>Tu perfil de padre/tutor aún no está creado</strong>
+        <span>Cierra sesión y vuelve a entrar; si persiste, contacta al administrador.</span>
+      </div>
+    </mat-card>
+  } @else {
+    <div class="contenido">
+      <!-- Generar reporte -->
+      <mat-card class="tarjeta generar" appearance="outlined">
+        <h2><mat-icon>auto_graph</mat-icon> Generar reporte</h2>
+        @if (hijosActivos().length === 0) {
+          <p class="nota">
+            Necesitas al menos un hijo con la vinculación <strong>activa</strong> para generar
+            reportes.
+          </p>
+          <a mat-stroked-button routerLink="/familia">Ir a Mi familia</a>
+        } @else {
+          <p class="nota">Se calcula con los datos reales de juego, alertas y logros del periodo.</p>
+          <mat-form-field appearance="outline">
+            <mat-label>Hijo/a</mat-label>
+            <mat-select
+              [value]="hijoGenerar()"
+              (selectionChange)="hijoGenerar.set($event.value)"
+            >
+              @for (h of hijosActivos(); track h.idPadreHijo) {
+                <mat-option [value]="h.idPadreHijo">{{ nombreHijo(h) }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-button-toggle-group
+            class="periodos"
+            [value]="periodoGenerar()"
+            (change)="periodoGenerar.set($event.value)"
+            aria-label="Periodo del reporte"
+          >
+            @for (p of periodos; track p.valor) {
+              <mat-button-toggle [value]="p.valor">{{ p.etiqueta }}</mat-button-toggle>
+            }
+          </mat-button-toggle-group>
+          <small class="ayuda">
+            {{
+              periodoGenerar() === 'SEMANAL' ? 'Hoy y los 6 días anteriores' : 'Hoy y los 29 días anteriores'
+            }}
+          </small>
+          <button
+            mat-flat-button
+            class="boton-verde"
+            type="button"
+            (click)="generar()"
+            [disabled]="generando() || hijoGenerar() === null"
+          >
+            <mat-icon>add_chart</mat-icon> {{ generando() ? 'Generando…' : 'Generar reporte' }}
+          </button>
+        }
+      </mat-card>
+
+      <!-- Lista -->
+      <div class="lista">
+        <div class="filtros">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Hijo/a</mat-label>
+            <mat-select [value]="filtroHijo()" (selectionChange)="cambiarFiltro($event.value)">
+              <mat-option [value]="null">Todos</mat-option>
+              @for (h of vinculos(); track h.idPadreHijo) {
+                <mat-option [value]="h.idPadreHijo">{{ nombreHijo(h) }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-slide-toggle [checked]="soloNoVistos()" (change)="soloNoVistos.set($event.checked)">
+            Solo sin ver ({{ noVistos() }})
+          </mat-slide-toggle>
+        </div>
+
+        <div class="tabla-contenedor">
+          @if (filtrados().length === 0) {
+            <div class="estado-vacio">
+              <mat-icon>insert_chart_outlined</mat-icon>
+              <strong>No hay reportes</strong>
+              <span>
+                @if (soloNoVistos()) {
+                  Ya revisaste todos los reportes. ¡Bien hecho!
+                } @else {
+                  Genera el primero con el panel de la izquierda.
+                }
+              </span>
+            </div>
+          } @else {
+            <div class="scroll-x">
+              <table mat-table [dataSource]="datos">
+                <ng-container matColumnDef="hijo">
+                  <th mat-header-cell *matHeaderCellDef>Hijo/a</th>
+                  <td mat-cell *matCellDef="let r">
+                    <strong>{{ nombreDe(r) }}</strong>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="periodo">
+                  <th mat-header-cell *matHeaderCellDef>Periodo</th>
+                  <td mat-cell *matCellDef="let r">
+                    <span class="periodo">
+                      <span class="chip-estado">{{ etiquetaPeriodo(r.periodoReporte) }}</span>
+                      <small
+                        >{{ r.fechaInicioPeriodo | date: 'dd/MM' }} –
+                        {{ r.fechaFinPeriodo | date: 'dd/MM/yyyy' }}</small
+                      >
+                    </span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="tiempo">
+                  <th mat-header-cell *matHeaderCellDef>Tiempo total</th>
+                  <td mat-cell *matCellDef="let r">
+                    {{ formatoDuracion(r.tiempoTotalJuegoMinutos ?? 0) }}
+                    <small class="secundario">· {{ r.sesionesJuegoTotal ?? 0 }} sesiones</small>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="respeto">
+                  <th mat-header-cell *matHeaderCellDef>Respeto del límite</th>
+                  <td mat-cell *matCellDef="let r">
+                    {{ r.respetoLimitesPorc != null ? (r.respetoLimitesPorc | number: '1.0-0') + ' %' : '—' }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="tendencia">
+                  <th mat-header-cell *matHeaderCellDef>Tendencia</th>
+                  <td mat-cell *matCellDef="let r">
+                    <span [class]="'chip-estado ' + claseTendencia(r.tendencia)">
+                      <mat-icon>{{ infoTendencia(r.tendencia).icono }}</mat-icon>
+                      {{ infoTendencia(r.tendencia).etiqueta }}
+                    </span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="visto">
+                  <th mat-header-cell *matHeaderCellDef>Estado</th>
+                  <td mat-cell *matCellDef="let r">
+                    @if (r.visto) {
+                      <span class="chip-estado">Visto</span>
+                    } @else {
+                      <span class="chip-estado alerta">Nuevo</span>
+                    }
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="acciones">
+                  <th mat-header-cell *matHeaderCellDef>
+                    <span class="visually-hidden">Acciones</span>
+                  </th>
+                  <td mat-cell *matCellDef="let r">
+                    <div class="acciones-fila">
+                      @if (!r.visto) {
+                        <button
+                          mat-icon-button
+                          type="button"
+                          (click)="marcarVisto(r)"
+                          [disabled]="marcando() === r.idReporte"
+                          aria-label="Marcar como visto"
+                          matTooltip="Marcar como visto"
+                        >
+                          <mat-icon>done_all</mat-icon>
+                        </button>
+                      }
+                      <a
+                        mat-icon-button
+                        [routerLink]="['/reportes', r.idReporte]"
+                        [attr.aria-label]="'Ver reporte de ' + nombreDe(r)"
+                        matTooltip="Ver reporte"
+                      >
+                        <mat-icon>visibility</mat-icon>
+                      </a>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr
+                  mat-row
+                  *matRowDef="let fila; columns: columnas"
+                  [class.no-visto]="!fila.visto"
+                ></tr>
+              </table>
+            </div>
+          }
+          <mat-paginator
+            [pageSizeOptions]="[10, 25, 50]"
+            [pageSize]="10"
+            [hidden]="filtrados().length === 0"
+            aria-label="Paginación de reportes"
+          />
+        </div>
+      </div>
+    </div>
+  }
+</div>

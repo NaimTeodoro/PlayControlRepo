@@ -1,0 +1,33 @@
+.tipo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: var(--azul);
+  white-space: nowrap;
+}
+
+td.pendiente {
+  font-weight: 600;
+}
+
+.sugerencia {
+  display: block;
+  font-weight: 400;
+  color: var(--texto-suave);
+}
+
+.boton-chico {
+  height: 36px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.filtro-tipo {
+  width: 200px;
+}
+
+.acciones {
+  align-items: center;
+  flex-wrap: wrap;
+}

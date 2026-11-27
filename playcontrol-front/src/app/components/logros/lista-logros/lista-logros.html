@@ -1,0 +1,131 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>emoji_events</mat-icon></span>
+    <div>
+      <h1>Logros</h1>
+      <p>Cumple metas de juego saludable, gana puntos y reclama tus logros.</p>
+    </div>
+    <div class="acciones">
+      <a mat-stroked-button routerLink="/ranking"><mat-icon>leaderboard</mat-icon> Ver ranking</a>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else {
+    <div class="grid-kpi">
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi verde"><mat-icon>stars</mat-icon></span>
+        <div>
+          <span class="valor">{{ puntos().puntosTotales }}</span><span class="etiqueta"
+            >Puntos totales</span
+          >
+        </div>
+      </mat-card>
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi azul"><mat-icon>military_tech</mat-icon></span>
+        <div>
+          <span class="valor">{{ puntos().logrosObtenidos }}</span><span class="etiqueta"
+            >Logros obtenidos</span
+          >
+        </div>
+      </mat-card>
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi"><mat-icon>pending_actions</mat-icon></span>
+        <div>
+          <span class="valor">{{ puntos().logrosEnProgreso }}</span><span class="etiqueta"
+            >En progreso</span
+          >
+        </div>
+      </mat-card>
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi"><mat-icon>redeem</mat-icon></span>
+        <div>
+          <span class="valor">{{ porReclamar() }}</span><span class="etiqueta">Por reclamar</span>
+        </div>
+      </mat-card>
+    </div>
+
+    <h2 class="titulo-seccion"><mat-icon>flag</mat-icon> Mis logros</h2>
+    @if (logros().length === 0) {
+      <mat-card class="tarjeta" appearance="outlined">
+        <div class="estado-vacio">
+          <mat-icon>emoji_events</mat-icon>
+          <strong>Aún no tienes logros</strong>
+          <span>Juega de forma saludable y pronto verás aquí tu progreso.</span>
+        </div>
+      </mat-card>
+    } @else {
+      <div class="grid-logros">
+        @for (r of logros(); track r.idRecompensa) {
+          <mat-card
+            class="tarjeta tarjeta-interactiva logro"
+            [class.obtenida]="r.estado === 'OBTENIDA'"
+            appearance="outlined"
+          >
+            <div class="logro-cabecera">
+              @if (r.imagenUrl && !imagenesRotas().has(r.idRecompensa!)) {
+                <img
+                  class="imagen-logro"
+                  [src]="r.imagenUrl"
+                  [alt]="r.nombreLogro"
+                  (error)="imagenRota(r.idRecompensa!)"
+                />
+              } @else {
+                <span class="icono-logro" [class.hecho]="r.estado !== 'EN_PROGRESO'">
+                  <mat-icon>{{ r.estado === 'EN_PROGRESO' ? 'flag' : 'emoji_events' }}</mat-icon>
+                </span>
+              }
+              <span class="chip-estado" [class]="'chip-estado ' + claseEstado(r.estado)">
+                {{ etiquetaEstado(r.estado) }}
+              </span>
+            </div>
+            <h3>{{ r.nombreLogro }}</h3>
+            <p>{{ r.descripcionLogro }}</p>
+
+            <div class="progreso">
+              <mat-progress-bar
+                class="barra-gruesa"
+                [class]="
+                  'barra-gruesa ' +
+                  ((r.porcentajeProgreso ?? 0) >= 100 ? 'progreso-ok' : 'progreso-aviso')
+                "
+                mode="determinate"
+                [value]="r.porcentajeProgreso ?? 0"
+                [attr.aria-label]="'Progreso de ' + r.nombreLogro"
+              />
+              <small>{{ r.porcentajeProgreso ?? 0 }} %</small>
+            </div>
+
+            <div class="logro-pie">
+              <strong>+{{ r.puntosAsignados }} pts</strong>
+              @if (r.estado === 'OBTENIDA') {
+                <button
+                  mat-flat-button
+                  class="boton-verde"
+                  [disabled]="reclamando() === r.idRecompensa"
+                  (click)="reclamar(r)"
+                >
+                  <mat-icon>redeem</mat-icon> Reclamar
+                </button>
+              } @else if (r.estado === 'RECLAMADA' && r.fechaReclamada) {
+                <small>Reclamado el {{ r.fechaReclamada | date: 'dd/MM/yyyy' }}</small>
+              }
+            </div>
+          </mat-card>
+        }
+      </div>
+    }
+  }
+</div>

@@ -1,0 +1,71 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>event</mat-icon></span>
+    <div>
+      <h1>{{ esPadre ? 'Citas de mis hijos' : 'Mis citas' }}</h1>
+      <p>
+        {{
+          esPadre
+            ? 'Las próximas consultas de tus hijos con sus profesionales de salud.'
+            : 'Tus próximas consultas con tu profesional de salud.'
+        }}
+      </p>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar las citas</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="cargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else if (citas().length === 0) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio">
+        <mat-icon>event_busy</mat-icon>
+        <strong>{{
+          esPadre
+            ? 'Ninguno de tus hijos tiene citas programadas'
+            : 'Aún no tienes citas programadas con un profesional'
+        }}</strong>
+        <span>Cuando un profesional agende una consulta, aparecerá aquí.</span>
+      </div>
+    </mat-card>
+  } @else if (esPadre) {
+    @if (grupos().length > 1) {
+      <mat-button-toggle-group
+        class="filtro"
+        aria-label="Filtrar por hijo"
+        [value]="filtro()"
+        (change)="filtro.set($event.value)"
+      >
+        <mat-button-toggle value="todos">Todos</mat-button-toggle>
+        @for (g of grupos(); track g.idJugadorJoven) {
+          <mat-button-toggle [value]="g.idJugadorJoven">{{ g.nombre }}</mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+    }
+
+    @for (g of gruposVisibles(); track g.idJugadorJoven) {
+      <h2 class="titulo-seccion"><mat-icon>child_care</mat-icon> {{ g.nombre }}</h2>
+      <div class="grid-citas">
+        @for (c of g.citas; track c.idProfesionalCliente) {
+          <app-tarjeta-cita [cita]="c" [destacada]="esDestacada(c)" />
+        }
+      </div>
+    }
+  } @else {
+    <div class="grid-citas">
+      @for (c of citas(); track c.idProfesionalCliente) {
+        <app-tarjeta-cita [cita]="c" [destacada]="esDestacada(c)" />
+      }
+    </div>
+  }
+</div>

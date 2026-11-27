@@ -1,0 +1,211 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>hourglass_bottom</mat-icon></span>
+    <div>
+      <h1>Mis límites</h1>
+      <p>Define cuánto quieres jugar y qué pasa cuando lo superas.</p>
+    </div>
+    <div class="acciones">
+      @if (controlado()) {
+        <span
+          class="chip-estado"
+          matTooltip="No puedes crear límites mientras tu padre/tutor controle el tuyo"
+        >
+          <mat-icon>lock</mat-icon> Controlado por tu padre/tutor
+        </span>
+      } @else {
+        <a mat-flat-button class="boton-verde" routerLink="/limites/nuevo">
+          <mat-icon>add</mat-icon> Nuevo límite
+        </a>
+      }
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else {
+    <!-- Límite activo -->
+    @if (activo(); as l) {
+      <mat-card class="tarjeta activo" appearance="outlined">
+        <div class="activo-cabecera">
+          <div>
+            <span class="chip-estado exito"><mat-icon>check_circle</mat-icon> Límite activo</span>
+            <h2>Hoy llevas {{ formatoDuracion(minutosHoy()) }}</h2>
+          </div>
+          @if (controlado()) {
+            <span class="chip-estado"><mat-icon>lock</mat-icon> Solo lectura</span>
+          } @else {
+            <a mat-stroked-button [routerLink]="['/limites/editar', l.idLimite]">
+              <mat-icon>edit</mat-icon> Editar
+            </a>
+          }
+        </div>
+        @if (controlado()) {
+          <p class="porcentaje">
+            <mat-icon>lock</mat-icon> Configurado por tu padre/tutor. Solo él puede cambiarlo.
+          </p>
+        }
+
+        @if (porcentajeHoy(); as pct) {
+          <mat-progress-bar
+            class="barra-gruesa"
+            [class]="'barra-gruesa ' + claseProgreso(pct)"
+            mode="determinate"
+            [value]="pct > 100 ? 100 : pct"
+            [attr.aria-label]="'Has usado ' + pct + '% de tu límite diario'"
+          />
+          <p class="porcentaje">{{ pct }}% de tu límite diario de {{ l.limiteHorasDiarias }} h</p>
+        } @else {
+          <p class="porcentaje">Aún no has jugado hoy. ¡Buen comienzo!</p>
+        }
+
+        <div class="datos">
+          <div>
+            <span>Diario</span><strong>{{ l.limiteHorasDiarias }} h</strong>
+          </div>
+          <div>
+            <span>Semanal</span><strong>{{ l.limiteHorasSemanal ?? '—' }} h</strong>
+          </div>
+          <div>
+            <span>Mensual</span><strong>{{ l.limiteHorasMensual ?? '—' }} h</strong>
+          </div>
+          <div>
+            <span>Horario</span
+            ><strong>{{ hora(l.horaInicioDia) }} – {{ hora(l.horaFinDia) }}</strong>
+          </div>
+          <div>
+            <span>Método</span><strong>{{ metodo(l.metodoBloqueo) }}</strong>
+          </div>
+          <div>
+            <span>Al exceder</span><strong>{{ accion(l.accionAlExceder) }}</strong>
+          </div>
+          <div>
+            <span>Aviso previo</span
+            ><strong>{{
+              l.minutosAvisoPrevio != null ? l.minutosAvisoPrevio + ' min' : '—'
+            }}</strong>
+          </div>
+          <div>
+            <span>Configurado por</span><strong>{{ creador(l) }}</strong>
+          </div>
+        </div>
+
+        <div class="dias" aria-label="Días permitidos">
+          @for (d of dias(l); track d) {
+            <span class="chip-estado">{{ d }}</span>
+          }
+        </div>
+      </mat-card>
+    } @else {
+      <mat-card class="tarjeta" appearance="outlined">
+        <div class="estado-vacio">
+          <mat-icon>hourglass_empty</mat-icon>
+          <strong>No tienes un límite activo</strong>
+          <span>Crea uno para recibir avisos cuando juegues demasiado.</span>
+          @if (!controlado()) {
+            <a mat-flat-button class="boton-verde" routerLink="/limites/nuevo">Crear mi límite</a>
+          }
+        </div>
+      </mat-card>
+    }
+
+    <!-- Todos los límites -->
+    <h2 class="titulo-seccion"><mat-icon>list_alt</mat-icon> Todos mis límites</h2>
+    <div class="tabla-contenedor">
+      @if (limites().length === 0) {
+        <div class="estado-vacio">
+          <mat-icon>list_alt</mat-icon>
+          <strong>No hay datos</strong>
+          <span>Todavía no has creado ningún límite.</span>
+        </div>
+      } @else {
+        <div class="scroll-x">
+          <table mat-table [dataSource]="ordenados()">
+            <ng-container matColumnDef="estado">
+              <th mat-header-cell *matHeaderCellDef>Estado</th>
+              <td mat-cell *matCellDef="let l">
+                <span class="chip-estado" [class.exito]="l.estado === 'ACTIVO'">{{
+                  l.estado === 'ACTIVO' ? 'Activo' : 'Inactivo'
+                }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="diario">
+              <th mat-header-cell *matHeaderCellDef>Diario</th>
+              <td mat-cell *matCellDef="let l">{{ l.limiteHorasDiarias }} h</td>
+            </ng-container>
+            <ng-container matColumnDef="semanal">
+              <th mat-header-cell *matHeaderCellDef>Semanal</th>
+              <td mat-cell *matCellDef="let l">{{ l.limiteHorasSemanal ?? '—' }} h</td>
+            </ng-container>
+            <ng-container matColumnDef="mensual">
+              <th mat-header-cell *matHeaderCellDef>Mensual</th>
+              <td mat-cell *matCellDef="let l">{{ l.limiteHorasMensual ?? '—' }} h</td>
+            </ng-container>
+            <ng-container matColumnDef="horario">
+              <th mat-header-cell *matHeaderCellDef>Horario</th>
+              <td mat-cell *matCellDef="let l">
+                {{ hora(l.horaInicioDia) }} – {{ hora(l.horaFinDia) }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="accion">
+              <th mat-header-cell *matHeaderCellDef>Al exceder</th>
+              <td mat-cell *matCellDef="let l">{{ accion(l.accionAlExceder) }}</td>
+            </ng-container>
+            <ng-container matColumnDef="creador">
+              <th mat-header-cell *matHeaderCellDef>Configurado por</th>
+              <td mat-cell *matCellDef="let l">
+                @if (controlado() && l.estado === 'ACTIVO') {
+                  <mat-icon class="candado" matTooltip="Solo tu padre/tutor puede cambiarlo"
+                    >lock</mat-icon
+                  >
+                }
+                {{ creador(l) }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef>
+                <span class="visually-hidden">Acciones</span>
+              </th>
+              <td mat-cell *matCellDef="let l">
+                <div class="acciones-fila">
+                  @if (!controlado()) {
+                  <a
+                    mat-icon-button
+                    [routerLink]="['/limites/editar', l.idLimite]"
+                    aria-label="Editar límite"
+                    matTooltip="Editar"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </a>
+                  <button
+                    mat-icon-button
+                    (click)="eliminar(l)"
+                    aria-label="Eliminar límite"
+                    matTooltip="Eliminar"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  }
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+            <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
+          </table>
+        </div>
+      }
+    </div>
+  }
+</div>

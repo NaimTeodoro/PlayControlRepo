@@ -1,0 +1,143 @@
+<div class="pagina pagina-perfil">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>person</mat-icon></span>
+    <div>
+      <h1>Mi perfil</h1>
+      <p>Tus datos y el código para vincular a tu familia.</p>
+    </div>
+    @if (perfil() && !editando()) {
+      <div class="acciones">
+        <button mat-flat-button class="boton-verde" (click)="editar()">
+          <mat-icon>edit</mat-icon> Editar
+        </button>
+      </div>
+    }
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else if (perfil(); as p) {
+    <mat-card class="tarjeta cabecera" appearance="outlined">
+      <span class="avatar" aria-hidden="true">{{ inicial }}</span>
+      <div>
+        <h2>{{ nombre }}</h2>
+        <span class="usuario">&#64;{{ username }}</span>
+      </div>
+    </mat-card>
+
+    <!-- Código de vinculación -->
+    <mat-card class="tarjeta codigo-tarjeta" appearance="outlined">
+      <mat-icon class="icono-codigo">badge</mat-icon>
+      <div class="codigo-texto">
+        <span class="etiqueta">Tu código de vinculación</span>
+        <strong class="codigo">{{ p.codigoVinculacion ?? '—' }}</strong>
+        <small>Compártelo con tu padre, madre o tutor para que pueda vincularse contigo.</small>
+      </div>
+      @if (p.codigoVinculacion) {
+        <button mat-flat-button class="boton-verde" type="button" (click)="copiarCodigo()">
+          <mat-icon>content_copy</mat-icon> Copiar
+        </button>
+      }
+    </mat-card>
+
+    @if (editando()) {
+      <mat-card class="tarjeta" appearance="outlined">
+        <form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="formulario">
+          <div class="form-2-col">
+            <mat-form-field appearance="outline">
+              <mat-label>Hora preferida de inicio</mat-label>
+              <input matInput type="time" formControlName="horaPreferidaInicio" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Hora preferida de fin</mat-label>
+              <input matInput type="time" formControlName="horaPreferidaFin" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Género preferido</mat-label>
+              <input matInput formControlName="generoPreferido" placeholder="Ej: Aventura" />
+              @if (form.controls.generoPreferido.hasError('maxlength')) {
+                <mat-error>Máximo 100 caracteres</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Motivación principal</mat-label>
+              <input matInput formControlName="motivacionPrincipal" />
+              @if (form.controls.motivacionPrincipal.hasError('maxlength')) {
+                <mat-error>Máximo 300 caracteres</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <p class="etiqueta-dias">Días en que prefieres jugar</p>
+          <mat-chip-listbox
+            multiple
+            formControlName="diasJuegoPreferidos"
+            aria-label="Días de juego preferidos"
+          >
+            @for (d of dias; track d.valor) {
+              <mat-chip-option [value]="d.valor">{{ d.etiqueta }}</mat-chip-option>
+            }
+          </mat-chip-listbox>
+
+          <div class="botones">
+            <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
+            <button mat-flat-button class="boton-verde" type="submit" [disabled]="guardando()">
+              <mat-icon>save</mat-icon> {{ guardando() ? 'Guardando…' : 'Guardar' }}
+            </button>
+          </div>
+        </form>
+      </mat-card>
+    } @else {
+      <mat-card class="tarjeta" appearance="outlined">
+        <dl class="datos">
+          <div>
+            <dt>Hora preferida</dt>
+            <dd>
+              @if (p.horaPreferidaInicio && p.horaPreferidaFin) {
+                {{ p.horaPreferidaInicio.slice(0, 5) }} – {{ p.horaPreferidaFin.slice(0, 5) }}
+              } @else {
+                —
+              }
+            </dd>
+          </div>
+          <div>
+            <dt>Días preferidos</dt>
+            <dd>
+              @for (d of etiquetasDias(p.diasJuegoPreferidos); track d) {
+                <span class="chip-estado">{{ d }}</span>
+              } @empty {
+                —
+              }
+            </dd>
+          </div>
+          <div>
+            <dt>Género preferido</dt>
+            <dd>{{ p.generoPreferido ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt>Nivel de habilidad</dt>
+            <dd>{{ p.nivelHabilidad ?? '—' }}</dd>
+          </div>
+          <div class="col-completa">
+            <dt>Motivación principal</dt>
+            <dd>{{ p.motivacionPrincipal ?? '—' }}</dd>
+          </div>
+        </dl>
+      </mat-card>
+    }
+  }
+</div>

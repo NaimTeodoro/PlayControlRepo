@@ -1,0 +1,58 @@
+/* Variables de diseño de PlayControl (colores del informe) */
+:root {
+  --azul: #0d0163;
+  --azul-medio: #2a1d9a;
+  --verde: #45fd0d;
+  --verde-texto: #1b5e00; /* verde oscuro para texto sobre blanco */
+  --gris: #c9c9c9;
+  --gris-claro: #f0f0f6;
+  --negro: #111111;
+  --blanco: #ffffff;
+  --texto-suave: #5b5b6e;
+  --ambar: #f5a524;
+  --rojo: #d93025;
+
+  --fuente-titulo: 'Meera Inimai', 'Poppins', sans-serif;
+  --fuente-texto: 'Poppins', sans-serif;
+
+  --radio: 16px;
+  --radio-sm: 12px;
+  --sombra: 0 2px 10px rgba(13, 1, 99, 0.07);
+  --sombra-hover: 0 8px 24px rgba(13, 1, 99, 0.14);
+  --transicion: 200ms ease;
+  --ancho-menu: 264px;
+}
+
+/* ---------- Layout principal (menú lateral fijo en escritorio) ---------- */
+.layout {
+  height: 100vh;
+  background: #f6f6fb;
+}
+
+.layout-sidenav {
+  width: var(--ancho-menu);
+  border-right: none;
+  /* Variables del tema de Material: sin ellas el fondo del sidenav vuelve a ser blanco */
+  --mat-sidenav-container-background-color: var(--azul);
+  --mat-sidenav-container-text-color: var(--blanco);
+  --mat-sidenav-container-width: var(--ancho-menu);
+  --mat-sidenav-container-shape: 0;
+  --mat-sidenav-container-divider-color: transparent;
+  background: var(--azul);
+  color: var(--blanco);
+}
+
+.layout-contenido {
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-contenido main {
+  flex: 1;
+}
+
+/* Foco visible para navegación con teclado */
+:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: 2px;
+}

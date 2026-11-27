@@ -1,0 +1,199 @@
+.avatar {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: 50%;
+  background: var(--azul);
+  color: var(--verde);
+  font-weight: 700;
+  font-size: 1.3rem;
+  display: grid;
+  place-items: center;
+}
+
+.progreso {
+  margin-top: 16px;
+  padding: 20px 24px;
+}
+
+.fila-progreso {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: var(--azul);
+}
+
+.pestanas {
+  margin-top: 24px;
+}
+
+.tipo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--azul);
+  white-space: nowrap;
+}
+
+.cabecera-limites {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.limite {
+  padding: 20px;
+}
+
+.limite.activo {
+  border-left: 6px solid var(--verde) !important;
+}
+
+.limite-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 16px;
+  margin: 12px 0;
+}
+
+.datos dt {
+  font-size: 0.75rem;
+  color: var(--texto-suave);
+}
+
+.datos dd {
+  margin: 2px 0 0;
+  font-weight: 500;
+  color: var(--azul);
+}
+
+.dias {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+/* Sesión en curso bajo la barra de progreso */
+.en-curso {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+  color: var(--texto-suave);
+}
+
+.en-curso mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--ambar);
+}
+
+/* Aviso cuando el hijo no tiene límite ACTIVO */
+.progreso.sin-limite {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  background: #fff8e8;
+}
+
+.sin-limite > mat-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  color: var(--ambar);
+}
+
+.sin-limite div {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.sin-limite strong {
+  color: var(--azul);
+  font-size: 1rem;
+}
+
+/* Logros del hijo */
+.grid-logros {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.logro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+}
+
+.logro-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icono-logro {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radio-sm);
+  background: var(--azul);
+  color: var(--verde);
+  display: grid;
+  place-items: center;
+}
+
+.icono-logro.hecho {
+  background: var(--verde);
+  color: var(--azul);
+}
+
+.logro h3 {
+  margin: 4px 0 0;
+  font-size: 1.05rem;
+}
+
+.logro p {
+  margin: 0;
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+.logro .fila-progreso {
+  margin-bottom: 0;
+  color: var(--texto-suave);
+}
+
+.chip-estado.azul {
+  background: var(--azul);
+  color: var(--verde);
+}
+
+@media (max-width: 1023.98px) {
+  .grid-logros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767.98px) {
+  .grid-logros,
+  .datos {
+    grid-template-columns: 1fr;
+  }
+
+  .progreso.sin-limite {
+    flex-wrap: wrap;
+  }
+}

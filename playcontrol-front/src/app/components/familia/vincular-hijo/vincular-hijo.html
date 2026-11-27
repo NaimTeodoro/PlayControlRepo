@@ -1,0 +1,82 @@
+<div class="pagina pagina-form">
+  <header class="encabezado-pagina">
+    <a mat-icon-button routerLink="/familia" aria-label="Volver a mis hijos"
+      ><mat-icon>arrow_back</mat-icon></a
+    >
+    <span class="icono-seccion"><mat-icon>person_add</mat-icon></span>
+    <div>
+      <h1>Vincular hijo</h1>
+      <p>Conecta la cuenta de tu hijo para acompañar su tiempo de juego.</p>
+    </div>
+  </header>
+
+  @if (idPadreTutor === null) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio">
+        <mat-icon>person_off</mat-icon>
+        <strong>Tu perfil de padre/tutor aún no está creado</strong>
+        <span>Cierra sesión y vuelve a entrar; si persiste, contacta al administrador.</span>
+      </div>
+    </mat-card>
+  } @else {
+    <div class="contenido">
+      <mat-card class="tarjeta pasos" appearance="outlined">
+        <h2>¿Cómo funciona?</h2>
+        <ol>
+          <li>
+            Tu hijo entra a PlayControl y copia su <strong>código de vinculación</strong>
+            (por ejemplo, PC-J00005) desde <strong>Mi perfil</strong>.
+          </li>
+          <li>Ingresa ese código aquí y elige tu relación con él o ella.</li>
+          <li>
+            La vinculación queda <strong>pendiente</strong> hasta que tu hijo la
+            <strong>autorice</strong> desde su cuenta.
+          </li>
+        </ol>
+      </mat-card>
+
+      <mat-card class="tarjeta" appearance="outlined">
+        <form [formGroup]="form" (ngSubmit)="vincular()" novalidate class="formulario">
+          <div class="form-2-col">
+            <mat-form-field appearance="outline">
+              <mat-label>Código de vinculación</mat-label>
+              <mat-icon matPrefix>badge</mat-icon>
+              <input
+                matInput
+                formControlName="codigoVinculacion"
+                placeholder="PC-XXXXXX"
+                autocomplete="off"
+                class="codigo"
+              />
+              @if (form.controls.codigoVinculacion.hasError('required')) {
+                <mat-error>Ingresa el código de tu hijo</mat-error>
+              } @else if (form.controls.codigoVinculacion.hasError('pattern')) {
+                <mat-error>El código tiene el formato PC-XXXXXX</mat-error>
+              } @else if (form.controls.codigoVinculacion.hasError('inexistente')) {
+                <mat-error>No existe ningún jugador con ese código</mat-error>
+              } @else if (form.controls.codigoVinculacion.hasError('servidor')) {
+                <mat-error>{{ form.controls.codigoVinculacion.getError('servidor') }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Relación</mat-label>
+              <mat-select formControlName="tipoRelacion">
+                @for (r of relaciones; track r.valor) {
+                  <mat-option [value]="r.valor">{{ r.etiqueta }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="botones">
+            <a mat-stroked-button routerLink="/familia">Cancelar</a>
+            <button mat-flat-button class="boton-verde" type="submit" [disabled]="guardando()">
+              <mat-icon>link</mat-icon> {{ guardando() ? 'Enviando…' : 'Vincular' }}
+            </button>
+          </div>
+        </form>
+      </mat-card>
+    </div>
+  }
+</div>

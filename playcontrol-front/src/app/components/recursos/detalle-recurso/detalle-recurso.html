@@ -1,0 +1,145 @@
+<div class="pagina pagina-detalle">
+  <header class="encabezado-pagina">
+    <a mat-icon-button routerLink="/recursos" aria-label="Volver a recursos"
+      ><mat-icon>arrow_back</mat-icon></a
+    >
+    <div><h1>Recurso educativo</h1></div>
+    @if (esEditor && recurso(); as r) {
+      <div class="acciones">
+        <a mat-flat-button class="boton-verde" [routerLink]="['/recursos/editar', r.idRecurso]">
+          <mat-icon>edit</mat-icon> Editar
+        </a>
+      </div>
+    }
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else if (recurso(); as r) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="cabecera">
+        <span class="icono-seccion"
+          ><mat-icon>{{ infoTipo(r.tipoRecurso).icono }}</mat-icon></span
+        >
+        <div>
+          <h2>{{ r.titulo }}</h2>
+          <div class="chips">
+            <span class="chip-estado">{{ infoTipo(r.tipoRecurso).etiqueta }}</span>
+            @if (r.categoria) {
+              <span class="chip-estado">{{ r.categoria }}</span>
+            }
+            @if (r.audienciaObjetivo) {
+              <span class="chip-estado exito">Para {{ r.audienciaObjetivo.toLowerCase() }}</span>
+            }
+            @if (r.nivelDificultad) {
+              <span class="chip-estado alerta">{{ r.nivelDificultad }}</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      @if (r.descripcion) {
+        <p class="descripcion">{{ r.descripcion }}</p>
+      }
+      @if (r.contenido) {
+        <p class="contenido">{{ r.contenido }}</p>
+      }
+
+      <dl class="datos">
+        <div>
+          <dt>Autor</dt>
+          <dd>{{ r.autor ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Duración</dt>
+          <dd>{{ r.duracionMinutos ? r.duracionMinutos + ' min' : '—' }}</dd>
+        </div>
+        <div>
+          <dt>Valoración</dt>
+          <dd>{{ r.valoracion ? (r.valoracion | number: '1.1-1') + ' / 5' : '—' }}</dd>
+        </div>
+        <div>
+          <dt>Visitas</dt>
+          <dd>{{ r.visitas ?? 0 }}</dd>
+        </div>
+        <div>
+          <dt>Publicado</dt>
+          <dd>{{ r.fechaPublicacion ? (r.fechaPublicacion | date: 'dd/MM/yyyy') : '—' }}</dd>
+        </div>
+        <div>
+          <dt>Actualizado</dt>
+          <dd>{{ r.fechaActualizacion ? (r.fechaActualizacion | date: 'dd/MM/yyyy') : '—' }}</dd>
+        </div>
+      </dl>
+
+      @if (registraConsumo && consumo(); as c) {
+        <section class="consumo" aria-label="Tu avance con este recurso">
+          <div>
+            <strong>Tu avance</strong>
+            @if (c.completado) {
+              <span class="chip-estado exito"><mat-icon>check</mat-icon> Completado</span>
+            } @else {
+              <button
+                mat-stroked-button
+                type="button"
+                [disabled]="guardando()"
+                (click)="marcarCompletado()"
+              >
+                <mat-icon>task_alt</mat-icon> Marcar como completado
+              </button>
+            }
+          </div>
+          <div class="valoracion" role="group" aria-label="Valoración de 1 a 5">
+            <span>Tu valoración</span>
+            @for (n of estrellas; track n) {
+              <button
+                mat-icon-button
+                type="button"
+                [disabled]="guardando()"
+                [attr.aria-label]="n + (n === 1 ? ' estrella' : ' estrellas')"
+                (click)="valorar(n)"
+              >
+                <mat-icon [class.activa]="(c.valoracionUsuario ?? 0) >= n">{{
+                  (c.valoracionUsuario ?? 0) >= n ? 'star' : 'star_border'
+                }}</mat-icon>
+              </button>
+            }
+          </div>
+        </section>
+      }
+
+      @if (r.urlRecurso) {
+        <div class="botones">
+          <a
+            mat-flat-button
+            class="boton-verde"
+            [href]="r.urlRecurso"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <mat-icon>open_in_new</mat-icon> Abrir recurso
+          </a>
+        </div>
+      }
+    </mat-card>
+  } @else {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio">
+        <mat-icon>search_off</mat-icon>
+        <strong>No se encontró el recurso</strong>
+        <a mat-stroked-button routerLink="/recursos">Volver a recursos</a>
+      </div>
+    </mat-card>
+  }
+</div>

@@ -1,0 +1,45 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>admin_panel_settings</mat-icon></span>
+    <div>
+      <h1>Administración</h1>
+      <p>
+        ¡Hola, {{ sesion()?.nombre || sesion()?.username }}! Gestiona usuarios, videojuegos,
+        plataformas, logros y recursos educativos.
+      </p>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else {
+    <div class="grid-accesos">
+      @for (a of accesos(); track a.ruta) {
+        <a class="enlace" [routerLink]="a.ruta">
+          <mat-card class="tarjeta tarjeta-interactiva acceso" appearance="outlined">
+            <span class="icono-acceso"
+              ><mat-icon>{{ a.icono }}</mat-icon></span
+            >
+            <div class="texto">
+              <h2>{{ a.titulo }}</h2>
+              <p>{{ a.descripcion }}</p>
+            </div>
+            <span class="total">{{ a.total ?? '—' }}</span>
+            <mat-icon class="flecha">arrow_forward</mat-icon>
+          </mat-card>
+        </a>
+      }
+    </div>
+  }
+</div>

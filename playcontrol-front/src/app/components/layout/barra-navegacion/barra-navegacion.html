@@ -1,0 +1,41 @@
+<mat-toolbar class="barra">
+  @if (mostrarBotonMenu()) {
+    <button mat-icon-button (click)="alternarMenu.emit()" aria-label="Abrir menú">
+      <mat-icon>menu</mat-icon>
+    </button>
+  }
+
+  <div class="saludo">
+    <span class="hola">¡Hola, {{ nombrePila() }}!</span>
+    <span class="fecha">{{ hoy | date: "EEEE d 'de' MMMM" }}</span>
+  </div>
+
+  <span class="espacio"></span>
+
+  @if (infoRol(); as rol) {
+    <span class="chip-rol">
+      <mat-icon>{{ rol.icono }}</mat-icon>
+      {{ rol.etiqueta }}
+    </span>
+  }
+
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="menuUsuario"
+    class="boton-avatar"
+    aria-label="Opciones de la cuenta"
+  >
+    <span class="avatar">{{ sesion()?.username?.charAt(0)?.toUpperCase() }}</span>
+  </button>
+
+  <mat-menu #menuUsuario="matMenu" xPosition="before">
+    <div class="menu-cabecera" mat-menu-item disabled>
+      <mat-icon>person</mat-icon>
+      <span>{{ sesion()?.username }}</span>
+    </div>
+    <button mat-menu-item (click)="cerrarSesion()">
+      <mat-icon>logout</mat-icon>
+      <span>Cerrar sesión</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>

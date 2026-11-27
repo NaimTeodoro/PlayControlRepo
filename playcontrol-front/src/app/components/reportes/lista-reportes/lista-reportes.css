@@ -1,0 +1,97 @@
+.contenido {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.generar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  position: sticky;
+  top: 24px;
+}
+
+.generar h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.generar h2 mat-icon {
+  color: var(--azul);
+}
+
+.nota {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+.periodos {
+  width: 100%;
+}
+
+.periodos mat-button-toggle {
+  flex: 1;
+}
+
+.ayuda {
+  color: var(--texto-suave);
+  font-size: 0.78rem;
+  margin-top: -4px;
+}
+
+.generar button {
+  height: 44px;
+}
+
+.filtros {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.filtros mat-form-field {
+  width: 260px;
+}
+
+.periodo {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.periodo small,
+.secundario {
+  color: var(--texto-suave);
+  font-size: 0.78rem;
+}
+
+.chip-estado mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+/* Reportes sin ver resaltados con una franja verde */
+tr.no-visto td:first-child {
+  box-shadow: inset 4px 0 0 var(--verde);
+}
+
+@media (max-width: 1023.98px) {
+  .contenido {
+    grid-template-columns: 1fr;
+  }
+
+  .generar {
+    position: static;
+  }
+}

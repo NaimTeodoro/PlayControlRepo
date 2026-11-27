@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>Elige la hora</h2>
+<mat-dialog-content class="contenido">
+  <div class="cabecera" role="group" aria-label="Hora seleccionada">
+    <button type="button" class="bloque" [class.activo]="modo() === 'hora'" (click)="modo.set('hora')" aria-label="Cambiar hora">
+      {{ textoHora() }}
+    </button>
+    <span class="separador">:</span>
+    <button type="button" class="bloque" [class.activo]="modo() === 'minuto'" (click)="modo.set('minuto')" aria-label="Cambiar minutos">
+      {{ textoMinuto() }}
+    </button>
+    <div class="ampm">
+      <button type="button" [class.activo]="!pm()" (click)="pm.set(false)">AM</button>
+      <button type="button" [class.activo]="pm()" (click)="pm.set(true)">PM</button>
+    </div>
+  </div>
+
+  <svg
+    class="reloj"
+    viewBox="0 0 240 240"
+    role="img"
+    [attr.aria-label]="modo() === 'hora' ? 'Esfera de horas' : 'Esfera de minutos'"
+    (pointerdown)="inicio($event)"
+    (pointermove)="mover($event)"
+    (pointerup)="fin()"
+  >
+    <circle cx="120" cy="120" r="112" class="fondo" />
+    <line x1="120" y1="120" [attr.x2]="aguja().x" [attr.y2]="aguja().y" class="aguja" />
+    <circle cx="120" cy="120" r="4" class="centro" />
+    <circle [attr.cx]="aguja().x" [attr.cy]="aguja().y" r="18" class="punta" />
+    @for (m of marcas(); track m.valor) {
+      <text
+        [attr.x]="m.x"
+        [attr.y]="m.y"
+        text-anchor="middle"
+        dominant-baseline="central"
+        [class.sel]="modo() === 'hora' ? m.valor === hora12() : m.valor === minuto()"
+      >
+        {{ m.texto }}
+      </text>
+    }
+  </svg>
+  <p class="ayuda">Toca o arrastra sobre el reloj. {{ modo() === 'hora' ? 'Luego elegirás los minutos.' : 'Elige los minutos.' }}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+  <button mat-flat-button class="boton-verde" type="button" (click)="aceptar()">Aceptar</button>
+</mat-dialog-actions>

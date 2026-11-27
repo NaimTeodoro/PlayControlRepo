@@ -1,0 +1,38 @@
+<div class="menu">
+  <a class="marca" [routerLink]="opciones()[0]?.ruta ?? '/'" (click)="navegar.emit()">
+    <span class="logo"><mat-icon>sports_esports</mat-icon></span>
+    <span class="nombre">PlayControl</span>
+  </a>
+
+  <nav class="opciones" aria-label="Menú principal">
+    @for (opcion of opciones(); track opcion.ruta) {
+      <a
+        class="opcion"
+        [routerLink]="opcion.ruta"
+        routerLinkActive="activa"
+        ariaCurrentWhenActive="page"
+        (click)="navegar.emit()"
+      >
+        <mat-icon>{{ opcion.icono }}</mat-icon>
+        <span>{{ opcion.etiqueta }}</span>
+      </a>
+    }
+  </nav>
+
+  <div class="usuario">
+    <span class="avatar" aria-hidden="true">{{ nombre().charAt(0).toUpperCase() }}</span>
+    <div class="datos">
+      <strong>{{ nombre() }}</strong>
+      <small>{{ etiquetaRol() }}</small>
+    </div>
+    <button
+      mat-icon-button
+      class="salir"
+      (click)="cerrarSesion()"
+      matTooltip="Cerrar sesión"
+      aria-label="Cerrar sesión"
+    >
+      <mat-icon>logout</mat-icon>
+    </button>
+  </div>
+</div>

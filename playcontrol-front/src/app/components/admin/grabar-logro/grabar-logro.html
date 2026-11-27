@@ -1,0 +1,97 @@
+<div class="pagina pagina-form">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>emoji_events</mat-icon></span>
+    <div>
+      <h1>{{ editando ? 'Editar logro' : 'Nuevo logro' }}</h1>
+      <p>Define la meta, los puntos que otorga y la condición para cumplirla.</p>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else {
+    <mat-card class="tarjeta" appearance="outlined">
+      <form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="formulario">
+        <div class="form-2-col">
+          <mat-form-field appearance="outline" class="col-completa">
+            <mat-label>Nombre del logro</mat-label>
+            <input matInput formControlName="nombreLogro" />
+            @if (form.controls.nombreLogro.hasError('required')) {
+              <mat-error>El nombre es obligatorio</mat-error>
+            } @else if (form.controls.nombreLogro.hasError('maxlength')) {
+              <mat-error>Máximo 150 caracteres</mat-error>
+            } @else if (form.controls.nombreLogro.hasError('servidor')) {
+              <mat-error>{{ form.controls.nombreLogro.getError('servidor') }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-completa">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput rows="2" formControlName="descripcion"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo</mat-label>
+            <mat-select formControlName="tipo">
+              @for (t of tipos; track t.valor) {
+                <mat-option [value]="t.valor">{{ t.etiqueta }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Puntos asignados</mat-label>
+            <input matInput type="number" min="0" formControlName="puntosAsignados" />
+            @if (form.controls.puntosAsignados.invalid) {
+              <mat-error>Ingresa un número de puntos (0 o más)</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo de condición</mat-label>
+            <mat-select formControlName="condicionTipo">
+              @for (c of condiciones; track c.valor) {
+                <mat-option [value]="c.valor">{{ c.etiqueta }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Valor a alcanzar</mat-label>
+            <input matInput type="number" min="1" formControlName="valorCondicion" />
+            <mat-hint>Cantidad necesaria para completar el logro</mat-hint>
+            @if (form.controls.valorCondicion.invalid) {
+              <mat-error>Ingresa un valor de 1 o más</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-completa">
+            <mat-label>Texto de la condición (lo ve el jugador)</mat-label>
+            <input
+              matInput
+              formControlName="condicion"
+              placeholder="Ej.: Realiza 5 pausas activas durante tus sesiones"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-completa">
+            <mat-label>URL de la imagen</mat-label>
+            <mat-icon matPrefix>image</mat-icon>
+            <input matInput type="url" formControlName="imagenUrl" placeholder="https://..." />
+          </mat-form-field>
+
+          <mat-slide-toggle formControlName="activo" class="activo"
+            >Logro activo</mat-slide-toggle
+          >
+        </div>
+
+        <div class="botones">
+          <a mat-stroked-button routerLink="/logros-catalogo">Cancelar</a>
+          <button mat-flat-button class="boton-verde" type="submit" [disabled]="guardando()">
+            <mat-icon>save</mat-icon> {{ guardando() ? 'Guardando…' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+</div>

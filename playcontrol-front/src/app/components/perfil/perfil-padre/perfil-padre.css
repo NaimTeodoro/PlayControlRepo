@@ -1,0 +1,146 @@
+.pagina-perfil {
+  max-width: 880px;
+}
+
+.cabecera {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.cabecera h2 {
+  margin-bottom: 2px;
+}
+
+.cuenta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.usuario,
+.cuenta small {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.cuenta small {
+  font-size: 0.8rem;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  border-radius: 50%;
+  background: var(--azul);
+  color: var(--verde);
+  font-weight: 700;
+  font-size: 1.4rem;
+  display: grid;
+  place-items: center;
+}
+
+/* Resumen de hijos (enlace a Mi familia) */
+.familia {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px 10px 16px;
+  border-radius: var(--radio-sm);
+  background: var(--azul);
+  color: var(--blanco);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: background var(--transicion);
+}
+
+.familia:hover,
+.familia:focus-visible {
+  background: #1a0d8a;
+}
+
+.familia strong {
+  color: var(--verde);
+  font-size: 1.1rem;
+}
+
+.familia .pendientes strong {
+  color: #ffd27a;
+}
+
+.formulario {
+  padding: 24px;
+}
+
+.subtitulo {
+  margin: 8px 0;
+  font-size: 0.9rem;
+  color: var(--azul);
+}
+
+.toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.botones button {
+  height: 44px;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 24px;
+  margin: 0;
+  padding: 24px;
+}
+
+.datos .col-completa {
+  grid-column: 1 / -1;
+}
+
+.datos dt {
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+}
+
+.datos dd {
+  margin: 2px 0 0;
+  font-weight: 500;
+  color: var(--azul);
+}
+
+.datos .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip-estado mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 767.98px) {
+  .datos {
+    grid-template-columns: 1fr;
+  }
+
+  .cabecera {
+    flex-wrap: wrap;
+  }
+}

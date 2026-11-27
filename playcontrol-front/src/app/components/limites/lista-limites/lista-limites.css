@@ -1,0 +1,66 @@
+.activo {
+  padding: 24px;
+  border-left: 6px solid var(--verde) !important;
+}
+
+.activo-cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.activo-cabecera h2 {
+  margin-top: 8px;
+  font-size: 1.6rem;
+}
+
+.chip-estado mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.porcentaje {
+  margin: 8px 0 24px;
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px 24px;
+  padding: 16px 0;
+  border-top: 1px solid #ececf4;
+}
+
+.datos span {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+}
+
+.datos strong {
+  color: var(--azul);
+}
+
+.dias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 767.98px) {
+  .datos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.candado {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+}

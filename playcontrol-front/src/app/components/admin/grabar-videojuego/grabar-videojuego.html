@@ -1,0 +1,103 @@
+<div class="pagina pagina-form">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>sports_esports</mat-icon></span>
+    <div>
+      <h1>{{ editando ? 'Editar videojuego' : 'Nuevo videojuego' }}</h1>
+      <p>Datos del videojuego para el catálogo.</p>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else {
+    <mat-card class="tarjeta" appearance="outlined">
+      <form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="formulario">
+        <div class="form-2-col">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre del juego</mat-label>
+            <input matInput formControlName="nombreJuego" />
+            @if (form.controls.nombreJuego.hasError('required')) {
+              <mat-error>El nombre es obligatorio</mat-error>
+            } @else if (form.controls.nombreJuego.hasError('maxlength')) {
+              <mat-error>Máximo 200 caracteres</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Plataforma</mat-label>
+            <mat-select formControlName="idPlataforma">
+              @for (p of plataformas(); track p.idPlataforma) {
+                <mat-option [value]="p.idPlataforma">{{ p.nombrePlataforma }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.idPlataforma.hasError('required')) {
+              <mat-error>Elige una plataforma</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Género</mat-label>
+            <input matInput formControlName="genero" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Desarrollador</mat-label>
+            <input matInput formControlName="desarrollador" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Fecha de lanzamiento</mat-label>
+            <input
+              matInput
+              [matDatepicker]="selLanzamiento"
+              formControlName="fechaLanzamiento"
+              readonly
+              (click)="selLanzamiento.open()"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="selLanzamiento" />
+            <mat-datepicker #selLanzamiento startView="multi-year" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Clasificación PEGI</mat-label>
+            <mat-select formControlName="clasificacionPEGI">
+              @for (p of pegis; track p) {
+                <mat-option [value]="p">PEGI {{ p }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Sesión promedio (minutos)</mat-label>
+            <input matInput type="number" min="0" formControlName="tiempoPromedioSesion" />
+            @if (form.controls.tiempoPromedioSesion.invalid) {
+              <mat-error>Ingresa un valor entre 0 y 1440</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-slide-toggle formControlName="activo" class="activo"
+            >Videojuego activo</mat-slide-toggle
+          >
+
+          <mat-form-field appearance="outline" class="col-completa">
+            <mat-label>URL de la imagen</mat-label>
+            <mat-icon matPrefix>image</mat-icon>
+            <input matInput type="url" formControlName="urlImagen" placeholder="https://..." />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-completa">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput rows="3" formControlName="descripcion"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="botones">
+          <a mat-stroked-button routerLink="/videojuegos">Cancelar</a>
+          <button mat-flat-button class="boton-verde" type="submit" [disabled]="guardando()">
+            <mat-icon>save</mat-icon> {{ guardando() ? 'Guardando…' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+</div>

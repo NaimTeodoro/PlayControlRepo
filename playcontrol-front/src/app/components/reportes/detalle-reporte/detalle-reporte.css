@@ -1,0 +1,165 @@
+.cabecera {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+}
+
+.tendencia {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: var(--gris-claro);
+}
+
+.tendencia.exito {
+  background: #e3ffd9;
+}
+
+.tendencia.peligro {
+  background: #ffe1de;
+}
+
+.icono-tendencia {
+  font-size: 44px;
+  width: 44px;
+  height: 44px;
+  color: var(--azul);
+}
+
+.tendencia.peligro .icono-tendencia {
+  color: #a1160c;
+}
+
+.tendencia.exito .icono-tendencia {
+  color: #1b5e00;
+}
+
+.tendencia div {
+  display: flex;
+  flex-direction: column;
+}
+
+.tendencia .etiqueta,
+.tendencia small {
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+}
+
+.tendencia strong {
+  font-family: var(--fuente-titulo);
+  font-size: 1.6rem;
+  color: var(--azul);
+}
+
+.respeto {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px 24px;
+}
+
+.fila-progreso {
+  display: flex;
+  justify-content: space-between;
+  color: var(--azul);
+}
+
+.respeto small {
+  color: var(--texto-suave);
+}
+
+
+.textos {
+  margin-top: 32px;
+}
+
+.bloque {
+  padding: 24px;
+}
+
+.bloque h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.15rem;
+  margin: 0 0 12px;
+}
+
+.bloque h2 mat-icon {
+  color: var(--azul);
+}
+
+.recomendaciones {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recomendaciones li {
+  display: flex;
+  gap: 8px;
+  line-height: 1.45;
+}
+
+.recomendaciones mat-icon {
+  color: #2fd10a;
+  min-width: 24px;
+}
+
+.nota {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+.chips-alertas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-estado {
+  font-size: 0.85rem;
+  padding: 6px 12px;
+}
+
+.chip-estado mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.sin-alertas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1b5e00;
+}
+
+.pie {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-end;
+  color: var(--texto-suave);
+  font-size: 0.8rem;
+  margin-top: 16px;
+}
+
+.pie mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 1023.98px) {
+  .cabecera {
+    grid-template-columns: 1fr;
+  }
+}

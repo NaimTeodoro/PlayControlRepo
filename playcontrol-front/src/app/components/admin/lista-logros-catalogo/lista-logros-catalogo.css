@@ -1,0 +1,49 @@
+.buscador {
+  display: block;
+  max-width: 380px;
+  margin-bottom: 16px;
+}
+
+.logro {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.logro small {
+  display: block;
+  color: var(--texto-suave);
+  max-width: 340px;
+}
+
+.imagen {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--azul);
+  color: var(--verde);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.imagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.puntos {
+  display: inline-grid;
+  place-items: center;
+  min-width: 40px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: var(--azul);
+  color: var(--verde);
+  font-weight: 700;
+  font-size: 0.85rem;
+}

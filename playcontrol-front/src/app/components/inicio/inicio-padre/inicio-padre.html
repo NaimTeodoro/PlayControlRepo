@@ -1,0 +1,204 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>family_restroom</mat-icon></span>
+    <div>
+      <h1>Mi familia</h1>
+      <p>El tiempo de juego y las alertas de tus hijos, en un solo lugar.</p>
+    </div>
+    <div class="acciones">
+      <a mat-flat-button class="boton-verde" routerLink="/familia/vincular">
+        <mat-icon>person_add</mat-icon> Vincular hijo
+      </a>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else if (sinPerfil()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio">
+        <mat-icon>person_off</mat-icon>
+        <strong>Tu perfil de padre/tutor aún no está creado</strong>
+        <span>Cierra sesión y vuelve a entrar; si persiste, contacta al administrador.</span>
+      </div>
+    </mat-card>
+  } @else {
+    <div class="grid-kpi">
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi azul"><mat-icon>child_care</mat-icon></span>
+        <div>
+          <span class="valor">{{ totalHijos() }}</span><span class="etiqueta"
+            >Hijos vinculados</span
+          >
+        </div>
+      </mat-card>
+      <a class="kpi-enlace" routerLink="/reportes" aria-label="Ver reportes">
+        <mat-card class="tarjeta tarjeta-interactiva kpi" appearance="outlined">
+          <span class="icono-kpi" [class.verde]="reportesSinVer() > 0"
+            ><mat-icon>assessment</mat-icon></span
+          >
+          <div>
+            <span class="valor">{{ reportesSinVer() }}</span><span class="etiqueta"
+              >Reportes sin ver</span
+            >
+          </div>
+        </mat-card>
+      </a>
+      <a class="kpi-enlace" routerLink="/citas" aria-label="Ver citas">
+        <mat-card class="tarjeta tarjeta-interactiva kpi" appearance="outlined">
+          <span class="icono-kpi azul"><mat-icon>event</mat-icon></span>
+          <div>
+            <span class="valor">{{ citasSemana() }}</span><span class="etiqueta"
+              >Citas esta semana</span
+            >
+          </div>
+        </mat-card>
+      </a>
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi" [class.verde]="totalPendientes() === 0"
+          ><mat-icon>notifications</mat-icon></span
+        >
+        <div>
+          <span class="valor">{{ totalPendientes() }}</span><span class="etiqueta"
+            >Alertas pendientes</span
+          >
+        </div>
+      </mat-card>
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi" [class.verde]="superaronLimite() === 0"
+          ><mat-icon>warning</mat-icon></span
+        >
+        <div>
+          <span class="valor">{{ superaronLimite() }}</span><span class="etiqueta"
+            >Superaron su límite hoy</span
+          >
+        </div>
+      </mat-card>
+    </div>
+
+    <h2 class="titulo-seccion"><mat-icon>groups</mat-icon> Mis hijos</h2>
+    @if (resumenes().length === 0) {
+      <mat-card class="tarjeta" appearance="outlined">
+        <div class="estado-vacio">
+          <mat-icon>child_care</mat-icon>
+          <strong>Aún no tienes hijos vinculados</strong>
+          <span
+            >Pide a tu hijo su código de vinculación (PC-XXXXXX), que aparece en su perfil, para
+            vincularlo.</span
+          >
+          <a mat-flat-button class="boton-verde" routerLink="/familia/vincular">Vincular hijo</a>
+        </div>
+      </mat-card>
+    } @else {
+      <div class="grid-2">
+        @for (r of resumenes(); track r.hijo.idPadreHijo) {
+          <mat-card
+            class="tarjeta tarjeta-interactiva hijo"
+            [class.superado]="(r.porcentaje ?? 0) >= 100"
+            appearance="outlined"
+          >
+            <div class="hijo-cabecera">
+              <span class="avatar" aria-hidden="true">{{ r.nombre.charAt(0).toUpperCase() }}</span>
+              <div class="nombre">
+                <h3>{{ r.nombre }}</h3>
+                <small>{{ r.hijo.codigoVinculacionHijo }}</small>
+              </div>
+              @if (!r.activo) {
+                <span class="chip-estado alerta">Esperando autorización</span>
+              } @else if ((r.porcentaje ?? 0) >= 100) {
+                <span class="chip-estado peligro"
+                  ><mat-icon>warning</mat-icon> Superó su límite</span
+                >
+              } @else if (r.enCurso) {
+                <span class="chip-estado"><mat-icon>play_circle</mat-icon> Jugando ahora</span>
+              } @else {
+                <span class="chip-estado exito">Dentro del límite</span>
+              }
+            </div>
+
+            @if (!r.activo) {
+              <p class="nota">
+                Esperando autorización de tu hijo. Cuando la acepte desde su cuenta verás aquí su
+                actividad.
+              </p>
+            } @else {
+              <div class="fila-progreso">
+                <span
+                  >Hoy: <strong>{{ formatoDuracion(r.minutosHoy) }}</strong></span
+                >
+                <span>{{
+                  r.limiteMinutos !== null
+                    ? 'Límite ' + formatoDuracion(r.limiteMinutos)
+                    : 'Sin límite configurado'
+                }}</span>
+              </div>
+              @if (r.porcentaje !== null) {
+                <mat-progress-bar
+                  class="barra-gruesa"
+                  [class]="'barra-gruesa ' + claseProgreso(r.porcentaje)"
+                  mode="determinate"
+                  [value]="r.porcentaje > 100 ? 100 : r.porcentaje"
+                  [attr.aria-label]="r.nombre + ' usó ' + r.porcentaje + '% de su límite diario'"
+                />
+              }
+              <div class="metricas">
+                <span
+                  ><mat-icon>date_range</mat-icon> Semana:
+                  {{ formatoDuracion(r.minutosSemana) }}</span
+                >
+                <span [class.hay-alertas]="r.alertasPendientes > 0">
+                  <mat-icon>notifications</mat-icon> {{ r.alertasPendientes }}
+                  {{ r.alertasPendientes === 1 ? 'alerta pendiente' : 'alertas pendientes' }}
+                </span>
+              </div>
+              @if (proximaDe(r.hijo.idJugadorJoven); as cita) {
+                <p class="proxima-cita">
+                  <mat-icon>event</mat-icon>
+                  <span
+                    >Próxima cita:
+                    <strong>{{ fechaCita(cita) | date: "EEE d 'de' MMM, h:mm a" }}</strong> ·
+                    {{ nombreProfesional(cita) }}</span
+                  >
+                </p>
+              }
+            }
+
+            @if (r.reporteNuevo; as rep) {
+              <a class="reporte-nuevo" [routerLink]="['/reportes', rep.idReporte]">
+                <mat-icon>mark_email_unread</mat-icon>
+                <span>
+                  <strong>Nuevo reporte {{ etiquetaPeriodo(rep.periodoReporte).toLowerCase() }}</strong>
+                  <small
+                    >{{ rep.fechaInicioPeriodo | date: 'dd/MM' }} –
+                    {{ rep.fechaFinPeriodo | date: 'dd/MM' }} ·
+                    {{ formatoDuracion(rep.tiempoTotalJuegoMinutos ?? 0) }} de juego</small
+                  >
+                </span>
+                <mat-icon class="flecha">chevron_right</mat-icon>
+              </a>
+            }
+
+            @if (r.activo) {
+              <div class="pie">
+                <a mat-stroked-button [routerLink]="['/familia/hijo', r.hijo.idPadreHijo]">
+                  Ver detalle <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+                </a>
+              </div>
+            }
+          </mat-card>
+        }
+      </div>
+    }
+  }
+</div>

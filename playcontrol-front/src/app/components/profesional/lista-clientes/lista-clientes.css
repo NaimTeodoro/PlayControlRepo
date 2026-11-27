@@ -1,0 +1,22 @@
+.cliente {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--azul);
+  color: var(--verde);
+  display: grid;
+  place-items: center;
+}
+
+.diagnostico {
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

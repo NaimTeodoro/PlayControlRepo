@@ -1,0 +1,343 @@
+/* Estilos globales reutilizables por todas las pantallas de PlayControl.
+   Las variables de color (--azul, --verde, --gris...) están en src/app/app.css */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--fuente-titulo);
+  color: var(--azul);
+  margin: 0;
+}
+
+/* ---------- Contenedor de página (escritorio primero, máx. 1200px) ---------- */
+.pagina {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+}
+
+.encabezado-pagina {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.encabezado-pagina > div:not(.acciones) {
+  flex: 1;
+  min-width: 0;
+}
+
+.encabezado-pagina h1 {
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+.encabezado-pagina p {
+  margin: 4px 0 0;
+  color: var(--texto-suave);
+}
+
+.encabezado-pagina .acciones {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+/* Icono cuadrado del encabezado de sección */
+.icono-seccion {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: var(--radio-sm);
+  background: var(--azul);
+  color: var(--verde);
+  display: grid;
+  place-items: center;
+}
+
+.icono-seccion mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+/* ---------- Tarjetas ---------- */
+.tarjeta {
+  border-radius: var(--radio) !important;
+  box-shadow: var(--sombra) !important;
+  transition:
+    box-shadow var(--transicion),
+    transform var(--transicion);
+}
+
+.tarjeta-interactiva:hover {
+  box-shadow: var(--sombra-hover) !important;
+  transform: translateY(-2px);
+}
+
+/* ---------- Cuadrículas ---------- */
+.grid-kpi {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+/* Formularios a 2 columnas cuando tienen más de 4 campos */
+.form-2-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+  row-gap: 8px; /* deja espacio para los mat-hint/mat-error entre filas */
+}
+
+.form-2-col .col-completa {
+  grid-column: 1 / -1;
+}
+
+/* ---------- Estado vacío ---------- */
+.estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 40px 16px;
+  color: var(--texto-suave);
+}
+
+.estado-vacio mat-icon {
+  font-size: 56px;
+  width: 56px;
+  height: 56px;
+  color: var(--gris);
+}
+
+.estado-vacio strong {
+  color: var(--azul);
+  font-size: 1.05rem;
+}
+
+/* ---------- Carga ---------- */
+.cargando {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+/* ---------- Chips de estado ---------- */
+.chip-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background: var(--gris-claro);
+  color: var(--azul);
+}
+
+.chip-estado.exito {
+  background: #e3ffd9;
+  color: #1b5e00;
+}
+
+.chip-estado.alerta {
+  background: #fff1d6;
+  color: #8a5300;
+}
+
+.chip-estado.peligro {
+  background: #ffe1de;
+  color: #a1160c;
+}
+
+/* ---------- Responsive (complemento, < 768px) ---------- */
+@media (max-width: 1023.98px) {
+  .grid-kpi {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767.98px) {
+  .pagina {
+    padding: 16px 16px 32px;
+  }
+
+  .grid-kpi,
+  .grid-2,
+  .form-2-col {
+    grid-template-columns: 1fr;
+  }
+
+  .encabezado-pagina {
+    flex-wrap: wrap;
+  }
+
+  .encabezado-pagina .acciones {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* ---------- Tarjetas KPI (resumen en los inicios) ---------- */
+.mat-mdc-card.kpi {
+  display: flex;
+  flex-direction: row; /* mat-card es una columna por defecto */
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+}
+
+.kpi .icono-kpi {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: var(--radio-sm);
+  display: grid;
+  place-items: center;
+  background: var(--gris-claro);
+  color: var(--azul);
+}
+
+.kpi .icono-kpi.verde {
+  background: var(--verde);
+  color: var(--azul);
+}
+
+.kpi .icono-kpi.azul {
+  background: var(--azul);
+  color: var(--verde);
+}
+
+.kpi .valor {
+  display: block;
+  font-family: var(--fuente-titulo);
+  font-size: 1.8rem;
+  line-height: 1.1;
+  color: var(--azul);
+}
+
+.kpi .etiqueta {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+}
+
+/* ---------- Barras de progreso por % del límite ---------- */
+.progreso-ok {
+  --mat-progress-bar-active-indicator-color: #2fd10a;
+  --mat-progress-bar-track-color: #e3ffd9;
+}
+
+.progreso-aviso {
+  --mat-progress-bar-active-indicator-color: #f5a524;
+  --mat-progress-bar-track-color: #fff1d6;
+}
+
+.progreso-pasado {
+  --mat-progress-bar-active-indicator-color: #d93025;
+  --mat-progress-bar-track-color: #ffe1de;
+}
+
+.mat-mdc-progress-bar.barra-gruesa {
+  height: 12px;
+  border-radius: 999px;
+}
+
+/* ---------- Tablas ---------- */
+.tabla-contenedor {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  overflow: hidden;
+}
+
+.tabla-contenedor .scroll-x {
+  overflow-x: auto;
+}
+
+.tabla-contenedor table {
+  width: 100%;
+}
+
+.tabla-contenedor th.mat-mdc-header-cell {
+  background: var(--gris-claro);
+  color: var(--azul);
+  font-weight: 600;
+}
+
+.tabla-contenedor tr.mat-mdc-row {
+  transition: background var(--transicion);
+}
+
+.tabla-contenedor tr.mat-mdc-row:hover {
+  background: #f8f8fd;
+}
+
+.acciones-fila {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+/* ---------- Secciones dentro de una página ---------- */
+.titulo-seccion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.25rem;
+  margin: 32px 0 16px;
+}
+
+.titulo-seccion mat-icon {
+  color: var(--azul);
+}
+
+/* ---------- Accesibilidad: respetar "reducir movimiento" del sistema ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+  }
+
+  .tarjeta-interactiva:hover {
+    transform: none;
+  }
+}
+
+/* ---------- Accesibilidad: texto solo para lectores de pantalla ---------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* ---------- Estado de error al cargar datos ---------- */
+.estado-vacio.estado-error mat-icon {
+  color: var(--rojo);
+}
+
+/* Oculta el ojo nativo de Edge/IE; ya usamos el botón de Material */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}

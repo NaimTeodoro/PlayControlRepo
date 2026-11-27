@@ -1,0 +1,82 @@
+// Tema de Angular Material para PlayControl (Material 3).
+// Paletas generadas con `ng generate @angular/material:theme-color` a partir de los colores del informe:
+// azul #0D0163 (primario), verde menta #45FD0D (terciario/acentos) y gris #C9C9C9 (neutro).
+@use '@angular/material' as mat;
+@use './theme-colors' as pc;
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: pc.$primary-palette,
+        tertiary: pc.$tertiary-palette,
+        theme-type: light,
+      ),
+      typography: (
+        plain-family: Poppins,
+        brand-family: 'Meera Inimai',
+      ),
+      density: 0,
+    )
+  );
+
+  // Forzamos el azul exacto del informe como color primario del sistema
+  @include mat.theme-overrides(
+    (
+      primary: #0d0163,
+      on-primary: #ffffff,
+      surface: #ffffff,
+    )
+  );
+
+  // Tarjetas con bordes redondeados (12–16px)
+  @include mat.card-overrides(
+    (
+      elevated-container-shape: 16px,
+      outlined-container-shape: 16px,
+      outlined-outline-color: #e4e4ec,
+    )
+  );
+}
+
+body {
+  color-scheme: light;
+  background-color: #f6f6fb;
+  color: #111111;
+  font: var(--mat-sys-body-medium);
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  height: 100%;
+}
+
+// Botón de acción verde menta: siempre con texto oscuro (accesibilidad)
+.boton-verde {
+  @include mat.button-overrides(
+    (
+      filled-container-color: #45fd0d,
+      filled-label-text-color: #0d0163,
+    )
+  );
+}
+
+// Snackbars de éxito y error (panelClass)
+.snack-exito {
+  @include mat.snack-bar-overrides(
+    (
+      container-color: #0d0163,
+      supporting-text-color: #ffffff,
+      button-color: #45fd0d,
+    )
+  );
+}
+
+.snack-error {
+  @include mat.snack-bar-overrides(
+    (
+      container-color: #b3261e,
+      supporting-text-color: #ffffff,
+      button-color: #ffffff,
+    )
+  );
+}

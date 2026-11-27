@@ -1,0 +1,20 @@
+<!--
+  Un solo <router-outlet>: el menú lateral y la barra se muestran u ocultan alrededor de él.
+  (Con dos outlets la página se creaba dos veces al cargar y duplicaba sus peticiones.)
+-->
+<mat-sidenav-container class="layout" [class.sin-layout]="!mostrarLayout()">
+  @if (mostrarLayout()) {
+    <mat-sidenav class="layout-sidenav" [mode]="esMovil() ? 'over' : 'side'" [opened]="!esMovil()">
+      <app-menu-lateral (navegar)="cerrarMenuEnMovil()" />
+    </mat-sidenav>
+  }
+
+  <mat-sidenav-content class="layout-contenido">
+    @if (mostrarLayout()) {
+      <app-barra-navegacion [mostrarBotonMenu]="esMovil()" (alternarMenu)="alternarMenu()" />
+    }
+    <main>
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,13 @@
+<div class="confirmacion">
+  <span class="icono" aria-hidden="true"><mat-icon>delete_forever</mat-icon></span>
+  <h2 mat-dialog-title>{{ titulo }}</h2>
+  <mat-dialog-content>
+    <p>{{ mensaje }}</p>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button [mat-dialog-close]="false">Cancelar</button>
+    <button mat-flat-button class="boton-eliminar" [mat-dialog-close]="true" cdkFocusInitial>
+      {{ textoConfirmar }}
+    </button>
+  </mat-dialog-actions>
+</div>

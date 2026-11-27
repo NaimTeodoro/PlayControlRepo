@@ -1,0 +1,149 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>family_restroom</mat-icon></span>
+    <div>
+      <h1>Mis hijos</h1>
+      <p>Hijos vinculados a tu cuenta y el estado de cada vinculación.</p>
+    </div>
+    <div class="acciones">
+      <a mat-flat-button class="boton-verde" routerLink="/familia/vincular">
+        <mat-icon>person_add</mat-icon> Vincular hijo
+      </a>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else if (sinPerfil()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio">
+        <mat-icon>person_off</mat-icon>
+        <strong>Tu perfil de padre/tutor aún no está creado</strong>
+        <span>Cierra sesión y vuelve a entrar; si persiste, contacta al administrador.</span>
+      </div>
+    </mat-card>
+  } @else {
+    <div class="tabla-contenedor">
+      @if (hijos().length === 0) {
+        <div class="estado-vacio">
+          <mat-icon>child_care</mat-icon>
+          <strong>No hay datos</strong>
+          <span>Todavía no has vinculado a ningún hijo.</span>
+          <a mat-flat-button class="boton-verde" routerLink="/familia/vincular">Vincular hijo</a>
+        </div>
+      } @else {
+        <div class="scroll-x">
+          <table mat-table [dataSource]="hijos()">
+            <ng-container matColumnDef="hijo">
+              <th mat-header-cell *matHeaderCellDef>Hijo</th>
+              <td mat-cell *matCellDef="let h">
+                <span class="hijo">
+                  <span class="avatar" aria-hidden="true">{{
+                    nombreHijo(h).charAt(0).toUpperCase()
+                  }}</span>
+                  <span class="datos-hijo">
+                    <strong>{{ nombreHijo(h) }}</strong>
+                    <small>{{ h.codigoVinculacionHijo }}</small>
+                  </span>
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="relacion">
+              <th mat-header-cell *matHeaderCellDef>Relación</th>
+              <td mat-cell *matCellDef="let h">{{ relacion(h.tipoRelacion) }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="estado">
+              <th mat-header-cell *matHeaderCellDef>Estado</th>
+              <td mat-cell *matCellDef="let h">
+                @if (relacionActiva(h)) {
+                  <span class="chip-estado exito">Activa</span>
+                } @else if (h.estado === 'PENDIENTE') {
+                  <span
+                    class="chip-estado alerta"
+                    matTooltip="Tu hijo debe autorizarla desde su cuenta"
+                    >Esperando autorización de tu hijo</span
+                  >
+                } @else {
+                  <span class="chip-estado">Inactiva</span>
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="permisos">
+              <th mat-header-cell *matHeaderCellDef>Permisos</th>
+              <td mat-cell *matCellDef="let h">
+                <div class="permisos">
+                  @for (p of permisos(h.permisosSupervision); track p) {
+                    <span class="chip-estado">{{ p }}</span>
+                  } @empty {
+                    —
+                  }
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fecha">
+              <th mat-header-cell *matHeaderCellDef>Vinculado el</th>
+              <td mat-cell *matCellDef="let h">
+                {{ h.fechaAsociacion ? (h.fechaAsociacion | date: 'dd/MM/yyyy') : '—' }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef>
+                <span class="visually-hidden">Acciones</span>
+              </th>
+              <td mat-cell *matCellDef="let h">
+                <div class="acciones-fila">
+                  @if (relacionActiva(h)) {
+                    <a
+                      mat-icon-button
+                      [routerLink]="['/familia/hijo', h.idPadreHijo]"
+                      [attr.aria-label]="'Ver detalle de ' + nombreHijo(h)"
+                      matTooltip="Ver detalle"
+                    >
+                      <mat-icon>visibility</mat-icon>
+                    </a>
+                    <a
+                      mat-icon-button
+                      routerLink="/reportes"
+                      [queryParams]="{ hijo: h.idPadreHijo }"
+                      [attr.aria-label]="'Reportes de ' + nombreHijo(h)"
+                      matTooltip="Reportes"
+                    >
+                      <mat-icon>assessment</mat-icon>
+                    </a>
+                  }
+                  <button
+                    mat-icon-button
+                    (click)="desvincular(h)"
+                    [attr.aria-label]="'Desvincular a ' + nombreHijo(h)"
+                    matTooltip="Desvincular"
+                  >
+                    <mat-icon>link_off</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+            <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
+          </table>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,65 @@
+<div class="pagina pagina-estrecha">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>leaderboard</mat-icon></span>
+    <div>
+      <h1>Ranking</h1>
+      <p>Compara tus puntos con los de otros jugadores de PlayControl.</p>
+    </div>
+    <div class="acciones">
+      <a mat-stroked-button routerLink="/logros"><mat-icon>emoji_events</mat-icon> Mis logros</a>
+    </div>
+  </header>
+
+  <div class="aviso" role="note">
+    <mat-icon>lock</mat-icon>
+    Por privacidad, cada jugador aparece con su código de vinculación y no con su nombre.
+  </div>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else if (ranking().length === 0) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio">
+        <mat-icon>leaderboard</mat-icon>
+        <strong>Todavía no hay jugadores en el ranking</strong>
+      </div>
+    </mat-card>
+  } @else {
+    @if (mio(); as m) {
+      <mat-card class="tarjeta resumen" appearance="outlined">
+        <span class="posicion">#{{ posicion() }}</span>
+        <div>
+          <strong>Tu posición en el ranking</strong>
+          <span>de {{ ranking().length }} jugadores · {{ m.puntos }} pts</span>
+        </div>
+      </mat-card>
+    }
+
+    <ol class="ranking">
+      @for (p of ranking(); track p.idUsuario; let i = $index) {
+        <li [class.yo]="p.yo" [attr.aria-current]="p.yo ? 'true' : null">
+          <span class="lugar">{{ medalla(i) ?? i + 1 }}</span>
+          <span class="avatar" aria-hidden="true"><mat-icon>sports_esports</mat-icon></span>
+          <div class="datos">
+            <strong>Jugador {{ p.codigo }}{{ p.yo ? ' (tú)' : '' }}</strong>
+            <small
+              >{{ p.logros }} {{ p.logros === 1 ? 'logro obtenido' : 'logros obtenidos' }}</small
+            >
+          </div>
+          <span class="puntos">{{ p.puntos }} pts</span>
+        </li>
+      }
+    </ol>
+  }
+</div>

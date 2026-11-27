@@ -1,0 +1,99 @@
+.grid-logros {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.logro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+}
+
+.logro.obtenida {
+  background: #fafffa;
+  outline: 2px solid var(--verde);
+}
+
+.logro-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icono-logro,
+.imagen-logro {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radio-sm);
+}
+
+.imagen-logro {
+  object-fit: cover;
+}
+
+.icono-logro {
+  background: var(--azul);
+  color: var(--verde);
+  display: grid;
+  place-items: center;
+}
+
+.icono-logro.hecho {
+  background: var(--verde);
+  color: var(--azul);
+}
+
+h3 {
+  margin: 8px 0 0;
+  font-size: 1.15rem;
+}
+
+p {
+  margin: 0;
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+.progreso {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progreso mat-progress-bar {
+  flex: 1;
+}
+
+.progreso small {
+  min-width: 44px;
+  text-align: right;
+  color: var(--texto-suave);
+}
+
+.logro-pie {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 40px;
+  margin-top: 8px;
+  color: var(--azul);
+}
+
+.logro-pie small {
+  color: var(--texto-suave);
+}
+
+@media (max-width: 1023.98px) {
+  .grid-logros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767.98px) {
+  .grid-logros {
+    grid-template-columns: 1fr;
+  }
+}

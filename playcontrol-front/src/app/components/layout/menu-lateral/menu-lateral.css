@@ -1,0 +1,111 @@
+.menu {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px 16px 16px;
+  color: var(--blanco);
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px 24px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radio-sm);
+  background: var(--verde);
+  color: var(--azul);
+  display: grid;
+  place-items: center;
+}
+
+.nombre {
+  font-family: var(--fuente-titulo);
+  font-size: 1.4rem;
+  letter-spacing: 0.02em;
+}
+
+.opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.opcion {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 16px;
+  border-radius: var(--radio-sm);
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition:
+    background var(--transicion),
+    color var(--transicion);
+}
+
+.opcion:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--blanco);
+}
+
+/* Opción activa: fondo verde menta con texto azul (contraste) */
+.opcion.activa {
+  background: var(--verde);
+  color: var(--azul);
+  font-weight: 600;
+}
+
+.usuario {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: var(--radio-sm);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  background: var(--blanco);
+  color: var(--azul);
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.datos {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.datos strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.datos small {
+  color: var(--verde);
+  font-size: 0.75rem;
+}
+
+.salir {
+  color: var(--blanco);
+}

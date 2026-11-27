@@ -1,0 +1,133 @@
+.pagina-perfil {
+  max-width: 880px;
+}
+
+.cabecera {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.cabecera h2 {
+  margin-bottom: 2px;
+}
+
+.usuario {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  border-radius: 50%;
+  background: var(--azul);
+  color: var(--verde);
+  font-weight: 700;
+  font-size: 1.4rem;
+  display: grid;
+  place-items: center;
+}
+
+.codigo-tarjeta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  background: var(--azul);
+  color: #fff;
+  border: none;
+}
+
+.icono-codigo {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: var(--verde);
+}
+
+.codigo-texto {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.codigo-texto .etiqueta {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.codigo {
+  font-family: 'Meera Inimai', 'Poppins', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 3px;
+  color: var(--verde);
+}
+
+.codigo-texto small {
+  opacity: 0.8;
+}
+
+.formulario {
+  padding: 24px;
+}
+
+.etiqueta-dias {
+  margin: 8px 0;
+  font-size: 0.9rem;
+  color: var(--azul);
+}
+
+.botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.botones button {
+  height: 44px;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 24px;
+  margin: 0;
+  padding: 24px;
+}
+
+.datos .col-completa {
+  grid-column: 1 / -1;
+}
+
+.datos dt {
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+}
+
+.datos dd {
+  margin: 2px 0 0;
+  font-weight: 500;
+  color: var(--azul);
+}
+
+.datos .chip-estado {
+  margin-right: 4px;
+}
+
+@media (max-width: 767.98px) {
+  .datos {
+    grid-template-columns: 1fr;
+  }
+
+  .codigo-tarjeta {
+    flex-wrap: wrap;
+  }
+}

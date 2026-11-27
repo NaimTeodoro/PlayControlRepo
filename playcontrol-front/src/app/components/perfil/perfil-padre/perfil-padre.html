@@ -1,0 +1,159 @@
+<div class="pagina pagina-perfil">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>person</mat-icon></span>
+    <div>
+      <h1>Mi perfil</h1>
+      <p>Tus datos como padre, madre o tutor y cómo quieres supervisar.</p>
+    </div>
+    @if (perfil() && !editando()) {
+      <div class="acciones">
+        <button mat-flat-button class="boton-verde" (click)="editar()">
+          <mat-icon>edit</mat-icon> Editar
+        </button>
+      </div>
+    }
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else if (perfil(); as p) {
+    <!-- Cabecera con la cuenta y el resumen de vínculos -->
+    <mat-card class="tarjeta cabecera" appearance="outlined">
+      <span class="avatar" aria-hidden="true">{{ inicial }}</span>
+      <div class="cuenta">
+        <h2>{{ nombre }}</h2>
+        <span class="usuario">&#64;{{ username }}</span>
+        @if (p.fechaRegistro) {
+          <small>Miembro desde {{ p.fechaRegistro | date: 'dd/MM/yyyy' }}</small>
+        }
+      </div>
+      <a class="familia" routerLink="/familia" aria-label="Ver mi familia">
+        <span><strong>{{ activos() }}</strong> activos</span>
+        @if (pendientes() > 0) {
+          <span class="pendientes"><strong>{{ pendientes() }}</strong> pendientes</span>
+        }
+        <mat-icon>chevron_right</mat-icon>
+      </a>
+    </mat-card>
+
+    @if (editando()) {
+      <mat-card class="tarjeta" appearance="outlined">
+        <form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="formulario">
+          <div class="form-2-col">
+            <mat-form-field appearance="outline" class="col-completa">
+              <mat-label>Métodos de control actuales</mat-label>
+              <input
+                matInput
+                formControlName="metodosControlActual"
+                placeholder="Ej: Horarios acordados y revisión semanal"
+              />
+              @if (form.controls.metodosControlActual.hasError('maxlength')) {
+                <mat-error>Máximo 255 caracteres</mat-error>
+              } @else if (form.controls.metodosControlActual.hasError('servidor')) {
+                <mat-error>{{ form.controls.metodosControlActual.getError('servidor') }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Preocupaciones principales</mat-label>
+              <textarea matInput rows="3" formControlName="preocupacionesPrincipales"></textarea>
+              @if (form.controls.preocupacionesPrincipales.hasError('maxlength')) {
+                <mat-error>Máximo 255 caracteres</mat-error>
+              } @else if (form.controls.preocupacionesPrincipales.hasError('servidor')) {
+                <mat-error>{{
+                  form.controls.preocupacionesPrincipales.getError('servidor')
+                }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Objetivos de supervisión</mat-label>
+              <textarea matInput rows="3" formControlName="objetivosSupervision"></textarea>
+              @if (form.controls.objetivosSupervision.hasError('maxlength')) {
+                <mat-error>Máximo 255 caracteres</mat-error>
+              } @else if (form.controls.objetivosSupervision.hasError('servidor')) {
+                <mat-error>{{ form.controls.objetivosSupervision.getError('servidor') }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Revisar reportes</mat-label>
+              <mat-select formControlName="frecuenciaRevisionReportes">
+                @for (f of frecuencias; track f.valor) {
+                  <mat-option [value]="f.valor">{{ f.etiqueta }}</mat-option>
+                }
+              </mat-select>
+              @if (form.controls.frecuenciaRevisionReportes.hasError('servidor')) {
+                <mat-error>{{
+                  form.controls.frecuenciaRevisionReportes.getError('servidor')
+                }}</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <p class="subtitulo">Alertas que quieres recibir</p>
+          <div class="toggles">
+            <mat-slide-toggle formControlName="alertaLimiteDiario">
+              Cuando supere su límite diario
+            </mat-slide-toggle>
+            <mat-slide-toggle formControlName="alertaHorario">
+              Cuando juegue fuera del horario permitido
+            </mat-slide-toggle>
+          </div>
+
+          <div class="botones">
+            <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
+            <button mat-flat-button class="boton-verde" type="submit" [disabled]="guardando()">
+              <mat-icon>save</mat-icon> {{ guardando() ? 'Guardando…' : 'Guardar' }}
+            </button>
+          </div>
+        </form>
+      </mat-card>
+    } @else {
+      <mat-card class="tarjeta" appearance="outlined">
+        <dl class="datos">
+          <div class="col-completa">
+            <dt>Métodos de control actuales</dt>
+            <dd>{{ p.metodosControlActual || '—' }}</dd>
+          </div>
+          <div>
+            <dt>Preocupaciones principales</dt>
+            <dd>{{ p.preocupacionesPrincipales || '—' }}</dd>
+          </div>
+          <div>
+            <dt>Objetivos de supervisión</dt>
+            <dd>{{ p.objetivosSupervision || '—' }}</dd>
+          </div>
+          <div>
+            <dt>Revisión de reportes</dt>
+            <dd>{{ etiquetaFrecuencia(p.frecuenciaRevisionReportes) }}</dd>
+          </div>
+          <div>
+            <dt>Alertas activadas</dt>
+            <dd class="chips">
+              <span class="chip-estado" [class.exito]="config().limiteDiario !== false">
+                <mat-icon>{{ config().limiteDiario !== false ? 'check' : 'close' }}</mat-icon>
+                Límite diario
+              </span>
+              <span class="chip-estado" [class.exito]="config().horario !== false">
+                <mat-icon>{{ config().horario !== false ? 'check' : 'close' }}</mat-icon>
+                Horario
+              </span>
+            </dd>
+          </div>
+        </dl>
+      </mat-card>
+    }
+  }
+</div>

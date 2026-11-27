@@ -1,0 +1,75 @@
+<div class="pagina pagina-form">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>devices</mat-icon></span>
+    <div>
+      <h1>{{ editando ? 'Editar dispositivo' : 'Nuevo dispositivo' }}</h1>
+      <p>Registra los equipos desde los que juegas.</p>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else {
+    <mat-card class="tarjeta" appearance="outlined">
+      <form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="formulario">
+        <div class="form-2-col">
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo de dispositivo</mat-label>
+            <mat-select formControlName="tipoDispositivo">
+              @for (t of tipos; track t.valor) {
+                <mat-option [value]="t.valor"
+                  ><mat-icon>{{ t.icono }}</mat-icon> {{ t.etiqueta }}</mat-option
+                >
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Estado</mat-label>
+            <mat-select formControlName="estado">
+              @for (e of estados; track e.valor) {
+                <mat-option [value]="e.valor">{{ e.etiqueta }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Modelo</mat-label>
+            <input matInput formControlName="modelo" placeholder="Ej: ASUS ROG Strix G15" />
+            @if (form.controls.modelo.hasError('required')) {
+              <mat-error>El modelo es obligatorio</mat-error>
+            } @else if (form.controls.modelo.hasError('maxlength')) {
+              <mat-error>Máximo 150 caracteres</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Sistema operativo</mat-label>
+            <input matInput formControlName="sistemaOperativo" placeholder="Ej: Windows 11" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Identificador</mat-label>
+            <input matInput formControlName="identificadorDisp" />
+            <mat-hint>Opcional: si lo dejas vacío se genera uno</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Versión de la app</mat-label>
+            <input matInput formControlName="versionApp" placeholder="Ej: 1.0.2" />
+            @if (form.controls.versionApp.hasError('maxlength')) {
+              <mat-error>Máximo 20 caracteres</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="botones">
+          <button mat-stroked-button type="button" (click)="volver()">Cancelar</button>
+          <button mat-flat-button class="boton-verde" type="submit" [disabled]="guardando()">
+            <mat-icon>save</mat-icon> {{ guardando() ? 'Guardando…' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+</div>

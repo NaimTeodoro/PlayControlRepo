@@ -1,0 +1,10 @@
+.grid-citas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.filtro {
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}

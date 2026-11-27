@@ -1,0 +1,78 @@
+.barra {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  height: 72px;
+  gap: 12px;
+  padding: 0 24px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid #e6e6ef;
+}
+
+.saludo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.hola {
+  font-family: var(--fuente-titulo);
+  font-size: 1.2rem;
+  color: var(--azul);
+}
+
+.fecha {
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+}
+
+/* Solo la primera letra en mayúscula: «martes 17 de noviembre» → «Martes 17 de noviembre» */
+.fecha::first-letter {
+  text-transform: uppercase;
+}
+
+.espacio {
+  flex: 1;
+}
+
+.chip-rol {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--gris-claro);
+  color: var(--azul);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.chip-rol mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--azul);
+  color: var(--verde);
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: grid;
+  place-items: center;
+}
+
+@media (max-width: 767.98px) {
+  .barra {
+    padding: 0 8px;
+  }
+
+  .chip-rol,
+  .fecha {
+    display: none;
+  }
+}

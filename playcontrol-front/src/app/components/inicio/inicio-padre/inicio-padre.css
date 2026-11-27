@@ -1,0 +1,153 @@
+.hijo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border-left: 6px solid var(--verde) !important;
+}
+
+.hijo.superado {
+  border-left-color: var(--rojo) !important;
+}
+
+.hijo-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 50%;
+  background: var(--azul);
+  color: var(--verde);
+  font-weight: 700;
+  font-size: 1.2rem;
+  display: grid;
+  place-items: center;
+}
+
+.nombre {
+  flex: 1;
+  min-width: 0;
+}
+
+.nombre h3 {
+  font-size: 1.2rem;
+}
+
+.nombre small {
+  color: var(--texto-suave);
+  text-transform: capitalize;
+}
+
+.chip-estado mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.fila-progreso {
+  display: flex;
+  justify-content: space-between;
+  color: var(--azul);
+  font-size: 0.9rem;
+}
+
+.metricas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+.metricas span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.metricas mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.metricas .hay-alertas {
+  color: #a1160c;
+  font-weight: 600;
+}
+
+.nota {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--texto-suave);
+}
+
+.pie {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* KPI que enlaza a los reportes */
+.kpi-enlace {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.kpi-enlace .kpi {
+  height: 100%;
+}
+
+/* Último reporte sin ver del hijo */
+.reporte-nuevo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radio-sm);
+  background: var(--gris-claro);
+  color: var(--azul);
+  text-decoration: none;
+  transition: background var(--transicion);
+}
+
+.reporte-nuevo:hover,
+.reporte-nuevo:focus-visible {
+  background: #e3ffd9;
+}
+
+.reporte-nuevo span {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.reporte-nuevo small {
+  color: var(--texto-suave);
+  font-size: 0.8rem;
+}
+
+.reporte-nuevo .flecha {
+  color: var(--texto-suave);
+}
+
+.proxima-cita {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 0;
+  font-size: 0.9rem;
+  color: var(--azul);
+}
+
+.proxima-cita mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}

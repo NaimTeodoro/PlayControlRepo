@@ -1,0 +1,138 @@
+.grid-resumen {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.tarjeta-periodo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+}
+
+.fila-titulo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icono-kpi {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radio-sm);
+  background: var(--azul);
+  color: var(--verde);
+  display: grid;
+  place-items: center;
+}
+
+.periodo {
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.tiempo {
+  font-family: var(--fuente-titulo);
+  font-size: 2.1rem;
+  line-height: 1.1;
+  color: var(--azul);
+}
+
+.detalle-limite {
+  font-size: 0.82rem;
+  color: var(--texto-suave);
+}
+
+/* Gráfico de barras CSS (sin librerías) */
+.grafico {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 12px;
+  height: 220px;
+  padding: 24px 24px 8px;
+}
+
+.columna {
+  flex: 1;
+  max-width: 96px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.valor-barra {
+  height: 18px;
+  font-size: 0.72rem;
+  color: var(--texto-suave);
+  white-space: nowrap;
+}
+
+.pista {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  border-radius: 10px 10px 4px 4px;
+  background: var(--gris-claro);
+  overflow: hidden;
+}
+
+.barra {
+  width: 100%;
+  background: var(--azul);
+  border-radius: 10px 10px 4px 4px;
+  transition: height 400ms ease;
+}
+
+.barra.supera {
+  background: var(--rojo);
+}
+
+.dia {
+  font-weight: 600;
+  color: var(--azul);
+}
+
+.leyenda {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0 24px 16px;
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+}
+
+.punto {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--azul);
+}
+
+.punto.supera {
+  background: var(--rojo);
+  margin-left: 16px;
+}
+
+@media (max-width: 1023.98px) {
+  .grid-resumen {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .grafico {
+    padding: 16px 8px 8px;
+    gap: 4px;
+  }
+
+  .valor-barra {
+    display: none;
+  }
+}

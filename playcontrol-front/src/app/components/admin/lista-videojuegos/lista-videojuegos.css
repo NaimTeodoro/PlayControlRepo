@@ -1,0 +1,22 @@
+.buscador {
+  display: block;
+  max-width: 380px;
+  margin-bottom: 16px;
+}
+
+.sub {
+  display: block;
+  color: var(--texto-suave);
+}
+
+.pegi {
+  display: inline-grid;
+  place-items: center;
+  min-width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--azul);
+  color: var(--verde);
+  font-weight: 700;
+  font-size: 0.85rem;
+}

@@ -1,0 +1,94 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>query_stats</mat-icon></span>
+    <div>
+      <h1>Monitoreo</h1>
+      <p>Cuánto has jugado hoy, esta semana y este mes.</p>
+    </div>
+    <div class="acciones">
+      <a mat-flat-button class="boton-verde" routerLink="/monitoreo/registrar">
+        <mat-icon>{{ enCurso() ? 'stop' : 'play_arrow' }}</mat-icon>
+        {{ enCurso() ? 'Terminar sesión' : 'Registrar sesión' }}
+      </a>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else {
+    <!-- Resumen de tiempo -->
+    <div class="grid-resumen">
+      @for (t of tarjetas(); track t.titulo) {
+        <mat-card class="tarjeta" appearance="outlined">
+          <div class="tarjeta-periodo">
+            <div class="fila-titulo">
+              <span class="icono-kpi"
+                ><mat-icon>{{ t.icono }}</mat-icon></span
+              >
+              <span class="periodo">{{ t.titulo }}</span>
+            </div>
+            <span class="tiempo">{{ formatoDuracion(t.minutos) }}</span>
+
+            @if (t.porcentaje !== null) {
+              <mat-progress-bar
+                class="barra-gruesa"
+                [class]="'barra-gruesa ' + claseProgreso(t.porcentaje)"
+                mode="determinate"
+                [value]="t.porcentaje > 100 ? 100 : t.porcentaje"
+                [attr.aria-label]="'Uso del límite: ' + (t.porcentaje | number: '1.0-0') + '%'"
+              />
+              <span class="detalle-limite">
+                {{ t.porcentaje | number: '1.0-0' }}% de tu límite de
+                {{ t.limiteHoras | number: '1.0-1' }} h
+              </span>
+            } @else {
+              <span class="detalle-limite">Sin límite activo definido</span>
+            }
+          </div>
+        </mat-card>
+      }
+    </div>
+
+    <!-- Gráfico de los últimos 7 días -->
+    <h2 class="titulo-seccion"><mat-icon>bar_chart</mat-icon> Últimos 14 días</h2>
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="grafico" role="img" aria-label="Minutos jugados en los últimos 14 días">
+        @for (d of ultimosDias(); track d.fecha) {
+          <div
+            class="columna"
+            [matTooltip]="(d.fecha | date: 'dd/MM') + ': ' + formatoDuracion(d.minutos)"
+          >
+            <span class="valor-barra">{{ d.minutos > 0 ? formatoDuracion(d.minutos) : '' }}</span>
+            <div class="pista">
+              <div
+                class="barra"
+                [class.supera]="superoLimite(d.minutos)"
+                [style.height.%]="alturaBarra(d.minutos)"
+              ></div>
+            </div>
+            <span class="dia">{{ d.etiqueta }}</span>
+          </div>
+        }
+      </div>
+      @if (limiteDiarioMin(); as limiteMin) {
+        <p class="leyenda">
+          <span class="punto"></span> Dentro del límite diario
+          <span class="punto supera"></span> Superó el límite ({{ formatoDuracion(limiteMin) }})
+        </p>
+      }
+    </mat-card>
+
+    <app-lista-sesiones [sesiones]="sesiones()" />
+  }
+</div>

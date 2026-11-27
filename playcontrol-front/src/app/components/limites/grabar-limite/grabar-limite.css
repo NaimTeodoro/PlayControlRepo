@@ -1,0 +1,34 @@
+.pagina-form {
+  max-width: 880px;
+}
+
+.formulario {
+  padding: 24px;
+}
+
+.botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.botones button {
+  height: 44px;
+}
+
+.dias {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.etiqueta-dias {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+.dias mat-error {
+  font-size: 0.75rem;
+}

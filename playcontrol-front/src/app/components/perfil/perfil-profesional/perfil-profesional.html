@@ -1,0 +1,163 @@
+<div class="pagina pagina-perfil">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>badge</mat-icon></span>
+    <div>
+      <h1>Mi perfil profesional</h1>
+      <p>Tus datos como profesional de la salud.</p>
+    </div>
+    @if (perfil() && !editando()) {
+      <div class="acciones">
+        <button mat-flat-button class="boton-verde" (click)="editar()">
+          <mat-icon>edit</mat-icon> Editar
+        </button>
+      </div>
+    }
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else if (editando()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="formulario">
+        @if (incompleto()) {
+          <p class="aviso">
+            <mat-icon>info</mat-icon> Tu perfil está pendiente. Completa al menos tu especialidad y
+            número de licencia.
+          </p>
+        }
+        <div class="form-2-col">
+          <mat-form-field appearance="outline">
+            <mat-label>Especialidad</mat-label>
+            <input matInput formControlName="especialidad" />
+            @if (form.controls.especialidad.hasError('required')) {
+              <mat-error>La especialidad es obligatoria</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Número de licencia</mat-label>
+            <input matInput formControlName="numeroLicencia" />
+            @if (form.controls.numeroLicencia.hasError('required')) {
+              <mat-error>El número de licencia es obligatorio</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Institución</mat-label>
+            <input matInput formControlName="institucion" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Años de experiencia</mat-label>
+            <input matInput type="number" min="0" formControlName="aniosExperiencia" />
+            @if (form.controls.aniosExperiencia.invalid) {
+              <mat-error>Ingresa un valor entre 0 y 70</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Área de trabajo</mat-label>
+            <mat-select formControlName="areaTrabajo">
+              <mat-option value="">Sin especificar</mat-option>
+              <mat-option value="ADICCIONES_TECNOLOGICAS">Adicciones tecnológicas</mat-option>
+              <mat-option value="PSICOLOGIA_CLINICA">Psicología clínica</mat-option>
+              <mat-option value="PSIQUIATRIA">Psiquiatría</mat-option>
+              <mat-option value="ORIENTACION_FAMILIAR">Orientación familiar</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Teléfono de consulta</mat-label>
+            <input matInput formControlName="telefonoConsulta" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-completa">
+            <mat-label>Horario de consulta</mat-label>
+            <input
+              matInput
+              formControlName="horarioConsulta"
+              placeholder="Lunes a viernes, 9:00 - 17:00"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-completa">
+            <mat-label>Certificaciones</mat-label>
+            <textarea matInput rows="2" formControlName="certificaciones"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="botones">
+          @if (!incompleto()) {
+            <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
+          }
+          <button mat-flat-button class="boton-verde" type="submit" [disabled]="guardando()">
+            <mat-icon>save</mat-icon> {{ guardando() ? 'Guardando…' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  } @else if (perfil(); as p) {
+    <mat-card class="tarjeta cabecera" appearance="outlined">
+      <span class="avatar" aria-hidden="true">{{ inicial }}</span>
+      <div>
+        <h2>{{ p.especialidad }}</h2>
+        <span class="chip-estado" [class.exito]="p.estado === 'ACTIVO'">{{
+          estado(p.estado)
+        }}</span>
+        @if (p.verificadoPor) {
+          <span class="chip-estado exito"
+            ><mat-icon>verified</mat-icon> Verificado por {{ p.verificadoPor }}</span
+          >
+        }
+      </div>
+    </mat-card>
+
+    <mat-card class="tarjeta" appearance="outlined">
+      <dl class="datos">
+        <div>
+          <dt>Número de licencia</dt>
+          <dd>{{ p.numeroLicencia }}</dd>
+        </div>
+        <div>
+          <dt>Institución</dt>
+          <dd>{{ p.institucion ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Años de experiencia</dt>
+          <dd>{{ p.aniosExperiencia ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Área de trabajo</dt>
+          <dd>{{ p.areaTrabajo ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Teléfono de consulta</dt>
+          <dd>{{ p.telefonoConsulta ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Horario de consulta</dt>
+          <dd>{{ p.horarioConsulta ?? '—' }}</dd>
+        </div>
+        <div class="col-completa">
+          <dt>Certificaciones</dt>
+          <dd>{{ p.certificaciones ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Fecha de verificación</dt>
+          <dd>{{ p.fechaVerificacion ? (p.fechaVerificacion | date: 'dd/MM/yyyy') : '—' }}</dd>
+        </div>
+      </dl>
+    </mat-card>
+  }
+</div>

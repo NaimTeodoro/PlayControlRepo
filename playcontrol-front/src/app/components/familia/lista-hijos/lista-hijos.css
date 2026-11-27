@@ -1,0 +1,32 @@
+.hijo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--azul);
+  color: var(--verde);
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.permisos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.datos-hijo {
+  display: flex;
+  flex-direction: column;
+}
+
+.datos-hijo small {
+  color: var(--texto-suave);
+  font-size: 0.75rem;
+}

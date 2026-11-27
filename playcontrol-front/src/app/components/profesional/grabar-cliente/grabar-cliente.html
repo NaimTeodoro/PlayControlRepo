@@ -1,0 +1,153 @@
+<div class="pagina pagina-form">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>person_add</mat-icon></span>
+    <div>
+      <h1>{{ editando ? 'Editar cliente' : 'Nuevo cliente' }}</h1>
+      <p>Diagnóstico, plan de tratamiento y próxima consulta.</p>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else if (sinPerfil()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio">
+        <mat-icon>badge</mat-icon>
+        <strong>Completa tu perfil profesional</strong>
+        <span>Necesitas tu perfil para registrar clientes.</span>
+        <a mat-flat-button class="boton-verde" routerLink="/perfil-profesional">Completar perfil</a>
+      </div>
+    </mat-card>
+  } @else {
+    <mat-card class="tarjeta" appearance="outlined">
+      <form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="formulario">
+        <div class="form-2-col">
+          @if (editando) {
+            <div class="jugador">
+              <span class="avatar" aria-hidden="true"><mat-icon>person</mat-icon></span>
+              <div>
+                <small>Jugador</small>
+                <strong>{{ nombreJugador() }}</strong>
+              </div>
+            </div>
+          } @else {
+            <mat-form-field appearance="outline">
+              <mat-label>Código de vinculación del jugador</mat-label>
+              <mat-icon matPrefix>badge</mat-icon>
+              <input
+                matInput
+                formControlName="codigoVinculacion"
+                placeholder="PC-XXXXXX"
+                autocomplete="off"
+                class="codigo"
+              />
+              <mat-hint>El joven lo ve en su inicio de PlayControl</mat-hint>
+              @if (form.controls.codigoVinculacion.hasError('required')) {
+                <mat-error>Ingresa el código del jugador</mat-error>
+              } @else if (form.controls.codigoVinculacion.hasError('pattern')) {
+                <mat-error>El código tiene el formato PC-XXXXXX</mat-error>
+              } @else if (form.controls.codigoVinculacion.hasError('inexistente')) {
+                <mat-error>No existe ningún jugador con ese código</mat-error>
+              }
+            </mat-form-field>
+          }
+
+          <mat-form-field appearance="outline">
+            <mat-label>Estado</mat-label>
+            <mat-select formControlName="estado">
+              @for (e of estados; track e.valor) {
+                <mat-option [value]="e.valor">{{ e.etiqueta }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Frecuencia de consulta</mat-label>
+            <mat-select formControlName="frecuenciaConsulta">
+              @for (f of frecuencias; track f) {
+                <mat-option [value]="f">{{ f }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Fecha de la próxima consulta</mat-label>
+            <input
+              matInput
+              [matDatepicker]="selFecha"
+              [min]="hoy"
+              formControlName="proximaFecha"
+              readonly
+              (click)="selFecha.open()"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="selFecha" />
+            <mat-datepicker #selFecha />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Hora de la consulta</mat-label>
+            <input
+              matInput
+              readonly
+              placeholder="Elegir hora"
+              [value]="textoHora()"
+              (click)="elegirHora()"
+              (keydown.enter)="elegirHora()"
+            />
+            <button
+              mat-icon-button
+              matIconSuffix
+              type="button"
+              aria-label="Abrir reloj"
+              (click)="elegirHora()"
+            >
+              <mat-icon>schedule</mat-icon>
+            </button>
+          </mat-form-field>
+
+          @if (form.hasError('consultaIncompleta') && (form.touched || form.dirty)) {
+            <p class="error-consulta col-completa" role="alert">Indica la fecha y la hora de la consulta.</p>
+          }
+          @if (form.hasError('consultaPasada')) {
+            <p class="error-consulta col-completa" role="alert">
+              La consulta debe ser en una fecha y hora iguales o posteriores a la actual.
+            </p>
+          }
+
+          <mat-form-field appearance="outline" class="col-completa">
+            <mat-label>Diagnóstico</mat-label>
+            <textarea matInput rows="3" formControlName="diagnostico"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-completa">
+            <mat-label>Plan de tratamiento</mat-label>
+            <textarea matInput rows="3" formControlName="planTratamiento"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-completa">
+            <mat-label>Notas</mat-label>
+            <textarea matInput rows="3" formControlName="notas"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="botones">
+          <a mat-stroked-button routerLink="/clientes">Cancelar</a>
+          <button mat-flat-button class="boton-verde" type="submit" [disabled]="guardando()">
+            <mat-icon>save</mat-icon> {{ guardando() ? 'Guardando…' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+</div>

@@ -1,0 +1,86 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>support_agent</mat-icon></span>
+    <div>
+      <h1>Soporte</h1>
+      <p>Resuelve tus dudas o escríbenos.</p>
+    </div>
+  </header>
+
+  <div class="grid-soporte">
+    <section>
+      <h2 class="titulo-seccion primero"><mat-icon>help</mat-icon> Preguntas frecuentes</h2>
+      @if (cargando()) {
+        <div class="cargando"><mat-spinner diameter="40" /></div>
+      } @else if (errorCarga()) {
+        <mat-card class="tarjeta" appearance="outlined">
+          <div class="estado-vacio estado-error" role="alert">
+            <mat-icon>cloud_off</mat-icon>
+            <strong>No pudimos cargar la información</strong>
+            <span>Revisa tu conexión o que el servidor esté disponible.</span>
+            <button mat-stroked-button type="button" (click)="recargar()">
+              <mat-icon>refresh</mat-icon> Reintentar
+            </button>
+          </div>
+        </mat-card>
+      } @else if (faqs().length === 0) {
+        <mat-card class="tarjeta" appearance="outlined">
+          <div class="estado-vacio">
+            <mat-icon>help_outline</mat-icon>
+            <strong>No hay datos</strong>
+            <span>Todavía no hay preguntas frecuentes publicadas.</span>
+          </div>
+        </mat-card>
+      } @else {
+        <mat-accordion class="faq" displayMode="flat">
+          @for (f of faqs(); track f.idRecurso) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>{{ f.titulo }}</mat-panel-title>
+              </mat-expansion-panel-header>
+              <p class="respuesta">{{ f.contenido ?? f.descripcion }}</p>
+            </mat-expansion-panel>
+          }
+        </mat-accordion>
+      }
+    </section>
+
+    <section>
+      <h2 class="titulo-seccion primero"><mat-icon>mail</mat-icon> ¿Necesitas más ayuda?</h2>
+      <mat-card class="tarjeta" appearance="outlined">
+        <form
+          #directiva="ngForm"
+          [formGroup]="form"
+          (ngSubmit)="enviar(directiva)"
+          novalidate
+          class="contacto"
+        >
+          <p class="nota">
+            Este formulario es una simulación: tu mensaje no se envía a ningún servidor.
+          </p>
+          <mat-form-field appearance="outline">
+            <mat-label>Asunto</mat-label>
+            <input matInput formControlName="asunto" />
+            @if (form.controls.asunto.hasError('required')) {
+              <mat-error>El asunto es obligatorio</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Mensaje</mat-label>
+            <textarea matInput rows="5" formControlName="mensaje"></textarea>
+            @if (form.controls.mensaje.hasError('required')) {
+              <mat-error>Cuéntanos en qué podemos ayudarte</mat-error>
+            } @else if (form.controls.mensaje.hasError('minlength')) {
+              <mat-error>Escribe al menos 10 caracteres</mat-error>
+            }
+          </mat-form-field>
+
+          <button mat-flat-button class="boton-verde" type="submit">
+            <mat-icon>send</mat-icon> Enviar mensaje
+          </button>
+        </form>
+      </mat-card>
+    </section>
+  </div>
+</div>

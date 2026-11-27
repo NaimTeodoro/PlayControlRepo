@@ -1,0 +1,117 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>sports_esports</mat-icon></span>
+    <div>
+      <h1>Videojuegos</h1>
+      <p>Catálogo de videojuegos disponibles en PlayControl.</p>
+    </div>
+    <div class="acciones">
+      <a mat-flat-button class="boton-verde" routerLink="/videojuegos/nuevo"
+        ><mat-icon>add</mat-icon> Nuevo videojuego</a
+      >
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else {
+    <mat-form-field appearance="outline" class="buscador" subscriptSizing="dynamic">
+      <mat-label>Buscar juego</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [value]="busqueda()" (input)="buscar($event)" />
+    </mat-form-field>
+
+    <div class="tabla-contenedor">
+      @if (filtrados().length === 0) {
+        <div class="estado-vacio">
+          <mat-icon>sports_esports</mat-icon>
+          <strong>No hay datos</strong>
+          <span>No hay juegos en el catálogo con ese filtro.</span>
+        </div>
+      } @else {
+        <div class="scroll-x">
+          <table mat-table [dataSource]="datos">
+            <ng-container matColumnDef="juego">
+              <th mat-header-cell *matHeaderCellDef>Videojuego</th>
+              <td mat-cell *matCellDef="let j">
+                <strong>{{ j.nombreJuego }}</strong>
+                <small class="sub">{{ j.desarrollador ?? '—' }}</small>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="plataforma">
+              <th mat-header-cell *matHeaderCellDef>Plataforma</th>
+              <td mat-cell *matCellDef="let j">{{ plataforma(j) }}</td>
+            </ng-container>
+            <ng-container matColumnDef="genero">
+              <th mat-header-cell *matHeaderCellDef>Género</th>
+              <td mat-cell *matCellDef="let j">{{ j.genero ?? '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="pegi">
+              <th mat-header-cell *matHeaderCellDef>PEGI</th>
+              <td mat-cell *matCellDef="let j">
+                <span class="pegi">{{ j.clasificacionPEGI ?? '—' }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="sesion">
+              <th mat-header-cell *matHeaderCellDef>Sesión promedio</th>
+              <td mat-cell *matCellDef="let j">
+                {{ j.tiempoPromedioSesion != null ? j.tiempoPromedioSesion + ' min' : '—' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="estado">
+              <th mat-header-cell *matHeaderCellDef>Estado</th>
+              <td mat-cell *matCellDef="let j">
+                <span class="chip-estado" [class.exito]="j.activo">{{
+                  j.activo ? 'Activo' : 'Inactivo'
+                }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef>
+                <span class="visually-hidden">Acciones</span>
+              </th>
+              <td mat-cell *matCellDef="let j">
+                <div class="acciones-fila">
+                  <a
+                    mat-icon-button
+                    [routerLink]="['/videojuegos/editar', j.idVideojuego]"
+                    aria-label="Editar juego"
+                    matTooltip="Editar"
+                    ><mat-icon>edit</mat-icon></a
+                  >
+                  <button
+                    mat-icon-button
+                    (click)="eliminar(j)"
+                    aria-label="Eliminar juego"
+                    matTooltip="Eliminar"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+            <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
+          </table>
+        </div>
+      }
+      <mat-paginator
+        [pageSizeOptions]="[10, 25, 50]"
+        [pageSize]="10"
+        [hidden]="filtrados().length === 0"
+        aria-label="Paginación de juegos"
+      />
+    </div>
+  }
+</div>

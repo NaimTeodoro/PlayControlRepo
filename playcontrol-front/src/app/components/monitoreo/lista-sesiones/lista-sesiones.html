@@ -1,0 +1,115 @@
+<div class="cabecera">
+  <h2 class="titulo-seccion"><mat-icon>history</mat-icon> {{ titulo() }}</h2>
+  <mat-button-toggle-group
+    [value]="periodo()"
+    (change)="periodo.set($event.value)"
+    aria-label="Filtrar sesiones por periodo"
+    hideSingleSelectionIndicator
+  >
+    <mat-button-toggle value="todas">Todas</mat-button-toggle>
+    <mat-button-toggle value="semana">Esta semana</mat-button-toggle>
+    <mat-button-toggle value="hoy">Hoy</mat-button-toggle>
+  </mat-button-toggle-group>
+</div>
+
+<div class="tabla-contenedor">
+  @if (filtradas().length === 0) {
+    <div class="estado-vacio">
+      <mat-icon>sports_esports</mat-icon>
+      <strong>No hay sesiones en este periodo</strong>
+      <span>Cuando juegues, tus sesiones aparecerán aquí.</span>
+    </div>
+  } @else {
+    <div class="scroll-x">
+      <table mat-table [dataSource]="datos">
+        <ng-container matColumnDef="fecha">
+          <th mat-header-cell *matHeaderCellDef>Inicio</th>
+          <td mat-cell *matCellDef="let s">{{ s.fechaInicio | date: 'dd/MM/yyyy HH:mm' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="juego">
+          <th mat-header-cell *matHeaderCellDef>Juego</th>
+          <td mat-cell *matCellDef="let s">
+            <strong>{{ s.nombreJuego ?? '—' }}</strong>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="duracion">
+          <th mat-header-cell *matHeaderCellDef>Duración</th>
+          <td mat-cell *matCellDef="let s">{{ formatoDuracion(minutos(s)) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let s">
+            <span class="chip-estado" [class]="'chip-estado ' + claseEstado(s)">{{
+              etiquetaEstado(s)
+            }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="limite">
+          <th mat-header-cell *matHeaderCellDef>Respetó límite</th>
+          <td mat-cell *matCellDef="let s">
+            @if (s.respetoLimites === true) {
+              <span class="respeto si"><mat-icon>check_circle</mat-icon> Sí</span>
+            } @else if (s.respetoLimites === false) {
+              <span class="respeto no"><mat-icon>cancel</mat-icon> No</span>
+            } @else {
+              —
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="bienestar">
+          <th mat-header-cell *matHeaderCellDef>Ánimo / energía</th>
+          <td mat-cell *matCellDef="let s">
+            <span class="bienestar">
+              @if (animo(s); as a) {
+                <mat-icon
+                  [matTooltip]="'Ánimo: ' + a.etiqueta"
+                  [attr.aria-label]="'Ánimo: ' + a.etiqueta"
+                  >{{ a.icono }}</mat-icon
+                >
+              }
+              @if (energia(s); as e) {
+                <mat-icon
+                  [matTooltip]="'Energía: ' + e.etiqueta"
+                  [attr.aria-label]="'Energía: ' + e.etiqueta"
+                  >{{ e.icono }}</mat-icon
+                >
+              }
+              @if (!animo(s) && !energia(s)) {
+                —
+              }
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef><span class="sr-only">Acciones</span></th>
+          <td mat-cell *matCellDef="let s">
+            @if (s.estadoSesion !== 'EN_CURSO') {
+              <a
+                mat-icon-button
+                [routerLink]="['/monitoreo/sesion', s.idSesion]"
+                matTooltip="Editar bienestar"
+                aria-label="Editar bienestar de la sesión"
+                ><mat-icon>edit</mat-icon></a
+              >
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
+      </table>
+    </div>
+  }
+  <mat-paginator
+    [pageSizeOptions]="[10, 25, 50]"
+    [pageSize]="10"
+    [hidden]="filtradas().length === 0"
+    aria-label="Paginación de sesiones"
+  />
+</div>

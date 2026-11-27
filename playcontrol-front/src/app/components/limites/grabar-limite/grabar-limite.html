@@ -1,0 +1,125 @@
+<div class="pagina pagina-form">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>hourglass_bottom</mat-icon></span>
+    <div>
+      <h1>{{ editando ? 'Editar límite' : 'Nuevo límite' }}</h1>
+      <p>Horas máximas, días permitidos y qué hacer al excederlas.</p>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else {
+    <mat-card class="tarjeta" appearance="outlined">
+      <form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="formulario">
+        <div class="form-2-col">
+          <mat-form-field appearance="outline">
+            <mat-label>Horas diarias</mat-label>
+            <input matInput type="number" step="0.5" formControlName="limiteHorasDiarias" />
+            @if (form.controls.limiteHorasDiarias.invalid) {
+              <mat-error>Ingresa un valor entre 0.5 y 24</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Horas semanales</mat-label>
+            <input matInput type="number" step="0.5" formControlName="limiteHorasSemanal" />
+            @if (form.controls.limiteHorasSemanal.invalid) {
+              <mat-error>Ingresa un valor entre 0.5 y 168</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Horas mensuales</mat-label>
+            <input matInput type="number" step="0.5" formControlName="limiteHorasMensual" />
+            @if (form.controls.limiteHorasMensual.invalid) {
+              <mat-error>Ingresa un valor entre 0.5 y 744</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Estado</mat-label>
+            <mat-select formControlName="estado">
+              @for (e of estados; track e.valor) {
+                <mat-option [value]="e.valor">{{ e.etiqueta }}</mat-option>
+              }
+            </mat-select>
+            <mat-hint>Al activarlo, tus otros límites pasan a inactivos</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Hora de inicio</mat-label>
+            <input matInput type="time" formControlName="horaInicioDia" />
+            @if (form.controls.horaInicioDia.invalid) {
+              <mat-error>Indica la hora de inicio</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Hora de fin</mat-label>
+            <input matInput type="time" formControlName="horaFinDia" />
+            @if (form.controls.horaFinDia.invalid) {
+              <mat-error>Indica la hora de fin</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="col-completa dias">
+            <span class="etiqueta-dias" id="etiqueta-dias">Días permitidos</span>
+            <mat-chip-listbox
+              formControlName="diasPermitidos"
+              multiple
+              aria-labelledby="etiqueta-dias"
+            >
+              @for (dia of diasSemana; track dia.valor) {
+                <mat-chip-option [value]="dia.valor">{{ dia.etiqueta }}</mat-chip-option>
+              }
+            </mat-chip-listbox>
+            @if (form.controls.diasPermitidos.touched && form.controls.diasPermitidos.invalid) {
+              <mat-error>Elige al menos un día</mat-error>
+            }
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Aviso previo (minutos)</mat-label>
+            <input matInput type="number" min="0" formControlName="minutosAvisoPrevio" />
+            @if (form.controls.minutosAvisoPrevio.invalid) {
+              <mat-error>Ingresa un valor entre 0 y 120</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Método de bloqueo</mat-label>
+            <mat-select formControlName="metodoBloqueo">
+              @for (m of metodos; track m.valor) {
+                <mat-option [value]="m.valor">{{ m.etiqueta }}</mat-option>
+              }
+            </mat-select>
+            <!-- SIMULADO: el bloqueo real de juegos no existe; solo se guarda la preferencia -->
+            <mat-hint>Por ahora solo se guarda tu preferencia; no bloquea juegos.</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-completa">
+            <mat-label>Acción al exceder</mat-label>
+            <mat-select formControlName="accionAlExceder">
+              @for (a of acciones; track a.valor) {
+                <mat-option [value]="a.valor">{{ a.etiqueta }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-completa">
+            <mat-label>Observaciones</mat-label>
+            <textarea matInput rows="2" formControlName="observaciones"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="botones">
+          <button mat-stroked-button type="button" (click)="volver()">Cancelar</button>
+          <button mat-flat-button class="boton-verde" type="submit" [disabled]="guardando()">
+            <mat-icon>save</mat-icon> {{ guardando() ? 'Guardando…' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+</div>

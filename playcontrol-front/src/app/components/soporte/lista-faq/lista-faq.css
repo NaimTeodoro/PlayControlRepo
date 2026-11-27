@@ -1,0 +1,50 @@
+.grid-soporte {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.titulo-seccion.primero {
+  margin-top: 0;
+}
+
+.faq {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.faq mat-expansion-panel {
+  border-radius: var(--radio-sm) !important;
+  box-shadow: var(--sombra) !important;
+}
+
+.respuesta {
+  margin: 0;
+  color: var(--texto-suave);
+  line-height: 1.6;
+}
+
+.contacto {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+.nota {
+  margin: 0 0 16px;
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+}
+
+.contacto button {
+  align-self: flex-end;
+  height: 44px;
+}
+
+@media (max-width: 1023.98px) {
+  .grid-soporte {
+    grid-template-columns: 1fr;
+  }
+}

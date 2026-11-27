@@ -1,0 +1,111 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>menu_book</mat-icon></span>
+    <div>
+      <h1>Recursos educativos</h1>
+      <p>Artículos, videos y guías para jugar con equilibrio.</p>
+    </div>
+    @if (esEditor) {
+      <div class="acciones">
+        <a mat-flat-button class="boton-verde" routerLink="/recursos/nuevo">
+          <mat-icon>add</mat-icon> Nuevo recurso
+        </a>
+      </div>
+    }
+  </header>
+
+  <div class="filtros">
+    <mat-form-field appearance="outline" class="buscador" subscriptSizing="dynamic">
+      <mat-label>Buscar recursos</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [value]="busqueda()" (input)="buscar($event)" />
+    </mat-form-field>
+
+    <mat-button-toggle-group
+      [value]="tipo()"
+      (change)="tipo.set($event.value)"
+      aria-label="Filtrar por tipo"
+      hideSingleSelectionIndicator
+    >
+      @for (t of tipos; track t.valor) {
+        <mat-button-toggle [value]="t.valor">{{ t.etiqueta }}</mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+  </div>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else if (filtrados().length === 0) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio">
+        <mat-icon>search_off</mat-icon>
+        <strong>No hay datos</strong>
+        <span>No encontramos recursos con ese filtro.</span>
+      </div>
+    </mat-card>
+  } @else {
+    <div class="grid-recursos">
+      @for (r of filtrados(); track r.idRecurso) {
+        <div class="item">
+          <a class="enlace-tarjeta" [routerLink]="['/recursos', r.idRecurso]">
+            <mat-card class="tarjeta tarjeta-interactiva recurso" appearance="outlined">
+              <div class="portada" [class]="'portada ' + (r.tipoRecurso ?? '').toLowerCase()">
+                <mat-icon>{{ infoTipo(r.tipoRecurso).icono }}</mat-icon>
+                <span class="etiqueta-tipo">{{ infoTipo(r.tipoRecurso).etiqueta }}</span>
+                @if (r.activo === false) {
+                  <span class="chip-estado inactivo">Inactivo</span>
+                }
+              </div>
+              <div class="cuerpo">
+                <span class="categoria">{{ r.categoria }}</span>
+                <h3>{{ r.titulo }}</h3>
+                <p>{{ r.descripcion }}</p>
+                <div class="pie">
+                  @if (r.duracionMinutos) {
+                    <span><mat-icon>schedule</mat-icon> {{ r.duracionMinutos }} min</span>
+                  }
+                  @if (r.valoracion) {
+                    <span><mat-icon>star</mat-icon> {{ r.valoracion | number: '1.1-1' }}</span>
+                  }
+                </div>
+              </div>
+            </mat-card>
+          </a>
+          @if (esEditor) {
+            <div class="acciones-tarjeta">
+              <a
+                mat-mini-fab
+                class="accion"
+                [routerLink]="['/recursos/editar', r.idRecurso]"
+                aria-label="Editar recurso"
+                matTooltip="Editar"
+              >
+                <mat-icon>edit</mat-icon>
+              </a>
+              <button
+                mat-mini-fab
+                class="accion"
+                (click)="eliminar(r)"
+                aria-label="Eliminar recurso"
+                matTooltip="Eliminar"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

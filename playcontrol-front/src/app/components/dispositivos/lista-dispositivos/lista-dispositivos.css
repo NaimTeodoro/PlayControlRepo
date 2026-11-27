@@ -1,0 +1,20 @@
+.dispositivo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dispositivo small {
+  display: block;
+  color: var(--texto-suave);
+}
+
+.icono-tipo {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radio-sm);
+  background: var(--azul);
+  color: var(--verde);
+  display: grid;
+  place-items: center;
+}

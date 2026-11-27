@@ -1,0 +1,213 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <a mat-icon-button routerLink="/reportes" aria-label="Volver a reportes"
+      ><mat-icon>arrow_back</mat-icon></a
+    >
+    <span class="icono-seccion"><mat-icon>assessment</mat-icon></span>
+    @if (reporte(); as r) {
+      <div>
+        <h1>Reporte {{ etiquetaPeriodo(r.periodoReporte).toLowerCase() }} · {{ r.nombreHijo }}</h1>
+        <p>
+          Del {{ r.fechaInicioPeriodo | date: 'dd/MM/yyyy' }} al
+          {{ r.fechaFinPeriodo | date: 'dd/MM/yyyy' }} · generado el
+          {{ r.fechaGeneracion | date: 'dd/MM/yyyy HH:mm' }}
+        </p>
+      </div>
+      <div class="acciones">
+        <a mat-stroked-button [routerLink]="['/familia/hijo', r.idPadreHijo]">
+          <mat-icon>child_care</mat-icon> Ver hijo/a
+        </a>
+        <button
+          mat-flat-button
+          class="boton-verde"
+          type="button"
+          (click)="generarOtro()"
+          [disabled]="generando()"
+        >
+          <mat-icon>refresh</mat-icon> {{ generando() ? 'Generando…' : 'Generar actualizado' }}
+        </button>
+      </div>
+    } @else {
+      <div><h1>Reporte</h1></div>
+    }
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else if (reporte(); as r) {
+    <!-- Tendencia + respeto del límite -->
+    <div class="cabecera">
+      <mat-card
+        class="tarjeta tendencia"
+        [class]="'tarjeta tendencia ' + claseTendencia(r.tendencia)"
+        appearance="outlined"
+      >
+        <mat-icon class="icono-tendencia">{{ infoTendencia(r.tendencia).icono }}</mat-icon>
+        <div>
+          <span class="etiqueta">Tendencia frente al periodo anterior</span>
+          <strong>{{ infoTendencia(r.tendencia).etiqueta }}</strong>
+          <small>
+            @switch (r.tendencia) {
+              @case ('MEJORA') {
+                Jugó menos o respetó más su límite. ¡Buen trabajo en equipo!
+              }
+              @case ('EMPEORA') {
+                Jugó más o respetó menos su límite. Conversen sobre ello.
+              }
+              @default {
+                Sin cambios claros o sin datos del periodo anterior.
+              }
+            }
+          </small>
+        </div>
+      </mat-card>
+
+      <mat-card class="tarjeta respeto" appearance="outlined">
+        <div class="fila-progreso">
+          <strong>Respeto del límite diario</strong>
+          <span>{{ respeto() }} %</span>
+        </div>
+        <mat-progress-bar
+          [class]="'barra-gruesa ' + (respeto() >= 70 ? 'progreso-ok' : respeto() >= 40 ? 'progreso-aviso' : 'progreso-pasado')"
+          mode="determinate"
+          [value]="respeto()"
+          [attr.aria-label]="'Respeto del límite: ' + respeto() + '%'"
+        />
+        <small
+          >{{ r.sesionesRespetuosas ?? 0 }} de {{ r.sesionesJuegoTotal ?? 0 }} sesiones dentro del
+          límite · racha de {{ r.rachaDias ?? 0 }}
+          {{ r.rachaDias === 1 ? 'día' : 'días' }}</small
+        >
+      </mat-card>
+    </div>
+
+    <!-- Métricas -->
+    <h2 class="titulo-seccion"><mat-icon>sports_esports</mat-icon> Juego</h2>
+    <div class="grid-kpi">
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi azul"><mat-icon>schedule</mat-icon></span>
+        <div>
+          <span class="valor">{{ formatoDuracion(r.tiempoTotalJuegoMinutos ?? 0) }}</span>
+          <span class="etiqueta">Tiempo total</span>
+        </div>
+      </mat-card>
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi"><mat-icon>videogame_asset</mat-icon></span>
+        <div>
+          <span class="valor">{{ r.sesionesJuegoTotal ?? 0 }}</span>
+          <span class="etiqueta">Sesiones</span>
+        </div>
+      </mat-card>
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi"><mat-icon>timelapse</mat-icon></span>
+        <div>
+          <span class="valor">{{ formatoDuracion(r.tiempoPromedioSesionMinutos ?? 0) }}</span>
+          <span class="etiqueta">Promedio por sesión</span>
+        </div>
+      </mat-card>
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi"><mat-icon>casino</mat-icon></span>
+        <div>
+          <span class="valor">{{ r.videojuegosJugados ?? 0 }}</span>
+          <span class="etiqueta">Videojuegos distintos</span>
+        </div>
+      </mat-card>
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi"><mat-icon>event_available</mat-icon></span>
+        <div>
+          <span class="valor">{{ r.diasActivos ?? 0 }}</span>
+          <span class="etiqueta">Días con juego</span>
+        </div>
+      </mat-card>
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi verde"><mat-icon>park</mat-icon></span>
+        <div>
+          <span class="valor">{{ r.diasSinJuego ?? 0 }}</span>
+          <span class="etiqueta">Días sin juego</span>
+        </div>
+      </mat-card>
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi" [class.verde]="(r.alertasRecibidas ?? 0) === (r.alertasRespondidas ?? 0)"
+          ><mat-icon>notifications</mat-icon></span
+        >
+        <div>
+          <span class="valor">{{ r.alertasRespondidas ?? 0 }}/{{ r.alertasRecibidas ?? 0 }}</span>
+          <span class="etiqueta">Alertas respondidas</span>
+        </div>
+      </mat-card>
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi verde"><mat-icon>emoji_events</mat-icon></span>
+        <div>
+          <span class="valor">{{ r.logrosAlcanzados ?? 0 }}</span>
+          <span class="etiqueta">Logros · {{ r.puntosObtenidos ?? 0 }} pts</span>
+        </div>
+      </mat-card>
+    </div>
+
+    <div class="grid-2 textos">
+      <!-- Recomendaciones del sistema -->
+      <mat-card class="tarjeta bloque" appearance="outlined">
+        <h2><mat-icon>tips_and_updates</mat-icon> Recomendaciones</h2>
+        @if (recomendaciones().length > 0) {
+          <ul class="recomendaciones">
+            @for (t of recomendaciones(); track $index) {
+              <li><mat-icon>check_circle</mat-icon> <span>{{ t }}</span></li>
+            }
+          </ul>
+        } @else {
+          <p class="nota">Sin recomendaciones para este periodo.</p>
+        }
+      </mat-card>
+
+      <!-- Alertas importantes -->
+      <mat-card class="tarjeta bloque" appearance="outlined">
+        <h2><mat-icon>priority_high</mat-icon> Alertas importantes</h2>
+        @if (alertasImportantes().length > 0) {
+          <p class="nota">Alertas de intensidad alta recibidas en el periodo:</p>
+          <div class="chips-alertas">
+            @for (a of alertasImportantes(); track a.etiqueta) {
+              <span class="chip-estado peligro"
+                ><mat-icon>{{ a.icono }}</mat-icon> {{ a.etiqueta }} × {{ a.veces }}</span
+              >
+            }
+          </div>
+        } @else if (r.alertasImportantes) {
+          <p>{{ r.alertasImportantes }}</p>
+        } @else {
+          <div class="sin-alertas">
+            <mat-icon>verified</mat-icon>
+            <span>No hubo alertas de intensidad alta. ¡Excelente!</span>
+          </div>
+        }
+      </mat-card>
+    </div>
+
+    <p class="pie">
+      @if (r.visto) {
+        <mat-icon>done_all</mat-icon> Visto
+        @if (r.fechaVisto) {
+          el {{ r.fechaVisto | date: 'dd/MM/yyyy HH:mm' }}
+        }
+      }
+    </p>
+  } @else {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio">
+        <mat-icon>search_off</mat-icon>
+        <strong>No encontramos este reporte</strong>
+        <a mat-stroked-button routerLink="/reportes">Volver a reportes</a>
+      </div>
+    </mat-card>
+  }
+</div>

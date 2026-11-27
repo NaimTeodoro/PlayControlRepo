@@ -1,0 +1,67 @@
+.grid-accesos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.enlace {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+}
+
+.enlace .acceso {
+  flex: 1;
+}
+
+.acceso {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+}
+
+.icono-acceso {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  border-radius: var(--radio-sm);
+  background: var(--azul);
+  color: var(--verde);
+  display: grid;
+  place-items: center;
+}
+
+.texto {
+  flex: 1;
+  min-width: 0;
+}
+
+.texto h2 {
+  font-size: 1.3rem;
+}
+
+.texto p {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+.total {
+  font-family: var(--fuente-titulo);
+  font-size: 2rem;
+  color: var(--azul);
+  min-width: 48px;
+  text-align: right;
+}
+
+.flecha {
+  color: var(--texto-suave);
+}
+
+@media (max-width: 767.98px) {
+  .grid-accesos {
+    grid-template-columns: 1fr;
+  }
+}

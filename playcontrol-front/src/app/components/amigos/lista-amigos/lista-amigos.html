@@ -1,0 +1,66 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>groups</mat-icon></span>
+    <div>
+      <h1>Amigos</h1>
+      <p>Juega acompañado y motívense a mantener hábitos sanos.</p>
+    </div>
+    <div class="acciones">
+      <a mat-stroked-button routerLink="/ranking"><mat-icon>leaderboard</mat-icon> Ver ranking</a>
+    </div>
+  </header>
+
+  <div class="aviso" role="note">
+    <mat-icon>info</mat-icon>
+    Sección de demostración: los amigos son datos de ejemplo y las solicitudes no se envían.
+  </div>
+
+  <div class="grid-amigos">
+    <section>
+      <h2 class="titulo-seccion primero"><mat-icon>schedule</mat-icon> Recientes</h2>
+      <mat-card class="tarjeta" appearance="outlined">
+        <ul class="lista">
+          @for (a of amigos(); track a.nombre) {
+            <li>
+              <span class="avatar" aria-hidden="true">{{ a.nombre.charAt(0).toUpperCase() }}</span>
+              <div class="datos">
+                <strong>{{ a.nombre }}</strong>
+                <small [class.en-linea]="a.enLinea">
+                  {{ a.enLinea ? 'En línea' : 'Desconectado' }}
+                </small>
+              </div>
+              <button
+                mat-icon-button
+                type="button"
+                [attr.aria-label]="'Enviar mensaje a ' + a.nombre"
+                matTooltip="Mensaje (simulado)"
+              >
+                <mat-icon>send</mat-icon>
+              </button>
+            </li>
+          }
+        </ul>
+      </mat-card>
+    </section>
+
+    <section>
+      <h2 class="titulo-seccion primero"><mat-icon>person_add</mat-icon> Agregar amigos</h2>
+      <mat-card class="tarjeta" appearance="outlined">
+        <form #directiva="ngForm" [formGroup]="form" (ngSubmit)="agregar(directiva)" novalidate>
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre de usuario</mat-label>
+            <input matInput formControlName="usuario" autocomplete="off" />
+            @if (form.controls.usuario.hasError('required')) {
+              <mat-error>Escribe el usuario de tu amigo</mat-error>
+            } @else if (form.controls.usuario.hasError('minlength')) {
+              <mat-error>Al menos 3 caracteres</mat-error>
+            }
+          </mat-form-field>
+          <button mat-flat-button class="boton-verde" type="submit">
+            <mat-icon>send</mat-icon> Enviar solicitud
+          </button>
+        </form>
+      </mat-card>
+    </section>
+  </div>
+</div>

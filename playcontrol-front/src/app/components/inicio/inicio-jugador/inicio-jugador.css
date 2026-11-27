@@ -1,0 +1,182 @@
+.codigo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--gris-claro);
+  color: var(--azul);
+  font-size: 0.9rem;
+}
+
+.codigo strong {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--verde);
+}
+
+.en-curso {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  margin-bottom: 16px;
+  border-radius: var(--radio-sm);
+  background: var(--azul);
+  color: var(--blanco);
+}
+
+.en-curso mat-icon {
+  color: var(--verde);
+}
+
+.bloque {
+  padding: 24px;
+}
+
+.fila-progreso {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+  color: var(--azul);
+}
+
+.mensaje {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0 0;
+  font-size: 0.9rem;
+}
+
+.mensaje.ok {
+  color: var(--verde-texto);
+}
+
+.mensaje.aviso {
+  color: #8a5300;
+}
+
+.mensaje.peligro {
+  color: #a1160c;
+}
+
+.abajo {
+  align-items: start;
+}
+
+.abajo .titulo-seccion {
+  margin-top: 32px;
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 8px 16px;
+}
+
+.lista li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #ececf4;
+}
+
+.lista li:last-child {
+  border-bottom: none;
+}
+
+.icono-fila {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: var(--radio-sm);
+  background: var(--gris-claro);
+  color: var(--azul);
+  display: grid;
+  place-items: center;
+}
+
+.icono-fila.verde {
+  background: var(--verde);
+}
+
+.texto {
+  flex: 1;
+  min-width: 0;
+}
+
+.texto strong,
+.texto small {
+  display: block;
+}
+
+.texto small {
+  color: var(--texto-suave);
+}
+
+.ver-mas {
+  margin: 0 8px 8px;
+}
+
+.codigo .copiar {
+  --mat-icon-button-state-layer-size: 32px;
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+  color: inherit;
+}
+
+.codigo .copiar mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.progreso-logro {
+  margin-top: 6px;
+  border-radius: 4px;
+}
+
+.por-reclamar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 16px 0;
+  padding: 10px 14px;
+  border-radius: var(--radio-sm);
+  background: var(--verde);
+  color: var(--azul);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.kpi[routerLink] {
+  cursor: pointer;
+}
+
+.en-curso a {
+  margin-left: auto;
+  background: var(--verde);
+  color: var(--azul);
+  border-color: var(--verde);
+}
+
+.aviso-solicitudes {
+  margin-bottom: 16px;
+}
+
+.proxima-cita {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.proxima-cita .texto strong::first-letter {
+  text-transform: uppercase;
+}

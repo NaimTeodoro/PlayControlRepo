@@ -1,0 +1,113 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>devices</mat-icon></span>
+    <div>
+      <h1>Dispositivos</h1>
+      <p>Los equipos desde los que juegas.</p>
+    </div>
+    <div class="acciones">
+      <a mat-flat-button class="boton-verde" routerLink="/dispositivos/nuevo">
+        <mat-icon>add</mat-icon> Nuevo dispositivo
+      </a>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else {
+    <div class="tabla-contenedor">
+      @if (dispositivos().length === 0) {
+        <div class="estado-vacio">
+          <mat-icon>devices_other</mat-icon>
+          <strong>No hay datos</strong>
+          <span>Aún no tienes dispositivos asociados. ¡Agrega el primero!</span>
+        </div>
+      } @else {
+        <div class="scroll-x">
+          <table mat-table [dataSource]="dispositivos()">
+            <ng-container matColumnDef="dispositivo">
+              <th mat-header-cell *matHeaderCellDef>Dispositivo</th>
+              <td mat-cell *matCellDef="let d">
+                <span class="dispositivo">
+                  <span class="icono-tipo"
+                    ><mat-icon>{{ icono(d.tipoDispositivo) }}</mat-icon></span
+                  >
+                  <span>
+                    <strong>{{ d.modelo ?? '—' }}</strong>
+                    <small>{{ d.tipoDispositivo }}</small>
+                  </span>
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="sistema">
+              <th mat-header-cell *matHeaderCellDef>Sistema operativo</th>
+              <td mat-cell *matCellDef="let d">{{ d.sistemaOperativo ?? '—' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="version">
+              <th mat-header-cell *matHeaderCellDef>Versión app</th>
+              <td mat-cell *matCellDef="let d">{{ d.versionApp ?? '—' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="actividad">
+              <th mat-header-cell *matHeaderCellDef>Última actividad</th>
+              <td mat-cell *matCellDef="let d">
+                {{ d.ultimaActividad ? (d.ultimaActividad | date: 'dd/MM/yyyy HH:mm') : '—' }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="estado">
+              <th mat-header-cell *matHeaderCellDef>Estado</th>
+              <td mat-cell *matCellDef="let d">
+                <span class="chip-estado" [class.exito]="d.estado === 'ACTIVO'">{{
+                  d.estado ?? '—'
+                }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef>
+                <span class="visually-hidden">Acciones</span>
+              </th>
+              <td mat-cell *matCellDef="let d">
+                <div class="acciones-fila">
+                  <a
+                    mat-icon-button
+                    [routerLink]="['/dispositivos/editar', d.idDispositivo]"
+                    aria-label="Editar dispositivo"
+                    matTooltip="Editar"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </a>
+                  <button
+                    mat-icon-button
+                    (click)="eliminar(d)"
+                    aria-label="Eliminar dispositivo"
+                    matTooltip="Eliminar"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+            <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
+          </table>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,81 @@
+:host {
+  display: block;
+}
+
+.cita {
+  padding: 20px;
+  height: 100%;
+}
+
+.cita.destacada {
+  border-color: var(--verde);
+  box-shadow: 0 0 0 2px var(--verde);
+}
+
+.cita-cabecera {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.icono-cita {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: var(--radio-sm);
+  background: var(--azul);
+  color: var(--verde);
+  display: grid;
+  place-items: center;
+}
+
+.fecha {
+  flex: 1;
+  min-width: 160px;
+  color: var(--azul);
+}
+
+.fecha strong,
+.fecha span {
+  display: block;
+}
+
+.fecha strong::first-letter {
+  text-transform: uppercase;
+}
+
+.fecha span {
+  color: var(--texto-suave);
+}
+
+.datos {
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.datos dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--texto-suave);
+  font-size: 0.8rem;
+}
+
+.datos dt mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.datos dd {
+  margin: 2px 0 0;
+  color: var(--azul);
+}
+
+.datos dd small {
+  display: block;
+  color: var(--texto-suave);
+}

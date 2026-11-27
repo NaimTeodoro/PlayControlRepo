@@ -1,0 +1,93 @@
+.pagina-detalle {
+  max-width: 800px;
+}
+
+mat-card {
+  padding: 24px;
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.cabecera h2 {
+  margin-bottom: 8px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.descripcion {
+  margin: 24px 0 8px;
+  font-weight: 500;
+  color: var(--azul);
+}
+
+.contenido {
+  margin: 0 0 24px;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px 24px;
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid #ececf4;
+}
+
+.datos dt {
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+}
+
+.datos dd {
+  margin: 2px 0 0;
+  font-weight: 500;
+  color: var(--azul);
+}
+
+.consumo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 24px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #f5f5fb;
+}
+
+.consumo > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.valoracion mat-icon {
+  color: var(--gris);
+}
+
+.valoracion mat-icon.activa {
+  color: #f5a400;
+}
+
+.botones {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+@media (max-width: 767.98px) {
+  .datos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -1,0 +1,73 @@
+<div class="fondo-auth">
+  <div class="tarjeta-auth">
+    <!-- Panel de bienvenida (solo escritorio) -->
+    <section class="bienvenida" aria-hidden="true">
+      <div class="marca">
+        <span class="logo"><mat-icon>sports_esports</mat-icon></span>
+        <span>PlayControl</span>
+      </div>
+      <h2>Juega con equilibrio</h2>
+      <p>Conoce cuánto juegas, ponte metas y gana recompensas cuidando tu bienestar.</p>
+      <ul>
+        <li><mat-icon>timer</mat-icon> Monitorea tu tiempo de juego</li>
+        <li><mat-icon>emoji_events</mat-icon> Desbloquea logros y suma puntos</li>
+        <li><mat-icon>family_restroom</mat-icon> Conecta con tu familia</li>
+      </ul>
+    </section>
+
+    <!-- Formulario -->
+    <section class="formulario">
+      <h1>Iniciar sesión</h1>
+      <p class="subtitulo">¡Qué bueno verte de nuevo!</p>
+
+      <form [formGroup]="form" (ngSubmit)="ingresar()" novalidate>
+        <mat-form-field appearance="outline">
+          <mat-label>Usuario</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input matInput formControlName="username" autocomplete="username" />
+          @if (form.controls.username.hasError('required')) {
+            <mat-error>Ingresa tu usuario</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Contraseña</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input
+            matInput
+            formControlName="password"
+            [type]="verPassword() ? 'text' : 'password'"
+            autocomplete="current-password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="verPassword.set(!verPassword())"
+            [attr.aria-label]="verPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          >
+            <mat-icon>{{ verPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (form.controls.password.hasError('required')) {
+            <mat-error>Ingresa tu contraseña</mat-error>
+          }
+        </mat-form-field>
+
+        <button
+          mat-flat-button
+          class="boton-verde boton-enviar"
+          type="submit"
+          [disabled]="cargando()"
+        >
+          @if (cargando()) {
+            <mat-spinner diameter="22" />
+          } @else {
+            Ingresar
+          }
+        </button>
+      </form>
+
+      <p class="enlace">¿No tienes cuenta? <a routerLink="/registro">Regístrate aquí</a></p>
+    </section>
+  </div>
+</div>

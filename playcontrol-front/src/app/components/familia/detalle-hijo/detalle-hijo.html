@@ -1,0 +1,392 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <a mat-icon-button routerLink="/familia" aria-label="Volver a mis hijos"
+      ><mat-icon>arrow_back</mat-icon></a
+    >
+    @if (hijo(); as h) {
+      <span class="avatar" aria-hidden="true">{{ nombreHijo(h).charAt(0).toUpperCase() }}</span>
+      <div>
+        <h1>{{ nombreHijo(h) }}</h1>
+        <p>
+          {{ relacion(h.tipoRelacion) }} · {{ h.codigoVinculacionHijo }} · vinculado el
+          {{ h.fechaAsociacion | date: 'dd/MM/yyyy' }}
+        </p>
+      </div>
+      @if (puedeVer() && !cargando() && !errorCarga()) {
+        <div class="acciones">
+          <a
+            mat-stroked-button
+            routerLink="/reportes"
+            [queryParams]="{ hijo: h.idPadreHijo }"
+          >
+            <mat-icon>assessment</mat-icon> Reportes
+          </a>
+          <button
+            mat-stroked-button
+            type="button"
+            [matMenuTriggerFor]="menuReporte"
+            [disabled]="generando()"
+          >
+            <mat-icon>add_chart</mat-icon> {{ generando() ? 'Generando…' : 'Generar reporte' }}
+          </button>
+          <mat-menu #menuReporte="matMenu">
+            <button mat-menu-item type="button" (click)="generarReporte('SEMANAL')">
+              <mat-icon>view_week</mat-icon> Semanal (últimos 7 días)
+            </button>
+            <button mat-menu-item type="button" (click)="generarReporte('MENSUAL')">
+              <mat-icon>calendar_month</mat-icon> Mensual (últimos 30 días)
+            </button>
+          </mat-menu>
+          @if (puedeConfigurar()) {
+            <button mat-flat-button class="boton-verde" type="button" (click)="configurarLimite()">
+              <mat-icon>tune</mat-icon> Configurar límite
+            </button>
+          }
+        </div>
+      }
+    } @else {
+      <div><h1>Detalle del hijo</h1></div>
+    }
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else if (!hijo()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio">
+        <mat-icon>search_off</mat-icon>
+        <strong>No encontramos a este hijo entre tus vinculados</strong>
+        <a mat-stroked-button routerLink="/familia">Volver a mis hijos</a>
+      </div>
+    </mat-card>
+  } @else if (!puedeVer()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio">
+        <mat-icon>hourglass_top</mat-icon>
+        <strong>Esperando que tu hijo autorice el vínculo</strong>
+        <span
+          >Podrás ver la actividad de {{ nombreHijo(hijo()!) }} cuando autorice la vinculación desde
+          su cuenta.</span
+        >
+      </div>
+    </mat-card>
+  } @else {
+    <!-- Resumen -->
+    <div class="grid-kpi">
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi azul"><mat-icon>today</mat-icon></span>
+        <div>
+          <span class="valor">{{ formatoDuracion(minutosHoy()) }}</span><span class="etiqueta"
+            >Jugado hoy</span
+          >
+        </div>
+      </mat-card>
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi"><mat-icon>date_range</mat-icon></span>
+        <div>
+          <span class="valor">{{ formatoDuracion(minutosSemana()) }}</span><span class="etiqueta"
+            >Esta semana</span
+          >
+        </div>
+      </mat-card>
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi" [class.verde]="pendientes() === 0"
+          ><mat-icon>notifications</mat-icon></span
+        >
+        <div>
+          <span class="valor">{{ pendientes() }}</span><span class="etiqueta"
+            >Alertas pendientes</span
+          >
+        </div>
+      </mat-card>
+      <mat-card class="tarjeta kpi" appearance="outlined">
+        <span class="icono-kpi verde"><mat-icon>stars</mat-icon></span>
+        <div>
+          <span class="valor">{{ puntos().puntosTotales }}</span>
+          <span class="etiqueta">Puntos · {{ puntos().logrosObtenidos }} logros</span>
+        </div>
+      </mat-card>
+    </div>
+
+    @if (porcentaje() !== null) {
+      <mat-card class="tarjeta progreso" appearance="outlined">
+        <div class="fila-progreso">
+          <strong
+            >Hoy: {{ formatoDuracion(minutosHoy()) }} de
+            {{ formatoDuracion(limiteDiarioMin() ?? 0) }}</strong
+          >
+          <span>{{ porcentaje() }}%</span>
+        </div>
+        <mat-progress-bar
+          [class]="'barra-gruesa ' + claseProgreso(porcentaje()!)"
+          mode="determinate"
+          [value]="porcentaje()! > 100 ? 100 : porcentaje()!"
+          [attr.aria-label]="'Uso del límite diario: ' + porcentaje() + '%'"
+        />
+        @if (resumen()?.sesionEnCurso; as s) {
+          <small class="en-curso"
+            ><mat-icon>play_circle</mat-icon> Jugando ahora {{ s.nombreJuego ?? '' }} desde las
+            {{ s.fechaInicio | date: 'HH:mm' }}</small
+          >
+        }
+      </mat-card>
+    } @else {
+      <mat-card class="tarjeta progreso sin-limite" appearance="outlined">
+        <mat-icon>hourglass_disabled</mat-icon>
+        <div>
+          <strong>Sin límite configurado</strong>
+          <span
+            >Hoy lleva {{ formatoDuracion(minutosHoy()) }} de juego. Configura un límite diario para
+            ayudarle a equilibrar su tiempo.</span
+          >
+        </div>
+        @if (puedeConfigurar()) {
+          <button mat-flat-button class="boton-verde" type="button" (click)="configurarLimite()">
+            <mat-icon>add</mat-icon> Crear límite
+          </button>
+        } @else {
+          <span class="chip-estado"
+            ><mat-icon>lock</mat-icon> No tienes permiso para configurar los límites de este
+            jugador</span
+          >
+        }
+      </mat-card>
+    }
+
+    <mat-tab-group class="pestanas" animationDuration="200ms" mat-stretch-tabs="false">
+      <!-- Sesiones -->
+      <mat-tab label="Sesiones">
+        <app-lista-sesiones [sesiones]="sesiones()" titulo="Sesiones de juego" />
+      </mat-tab>
+
+      <!-- Alertas (solo lectura: las responde el hijo) -->
+      <mat-tab [label]="'Alertas (' + pendientes() + ')'">
+        <h2 class="titulo-seccion"><mat-icon>notifications</mat-icon> Alertas</h2>
+        <div class="tabla-contenedor">
+          @if (alertas().length === 0) {
+            <div class="estado-vacio">
+              <mat-icon>notifications_none</mat-icon>
+              <strong>No hay alertas</strong>
+              <span>{{ nombreHijo(hijo()!) }} no ha recibido alertas.</span>
+            </div>
+          } @else {
+            <div class="scroll-x">
+              <table mat-table [dataSource]="alertasOrdenadas()">
+                <ng-container matColumnDef="tipo">
+                  <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                  <td mat-cell *matCellDef="let a">
+                    <span class="tipo"
+                      ><mat-icon>{{ infoTipo(a.tipoAlerta).icono }}</mat-icon>
+                      {{ infoTipo(a.tipoAlerta).etiqueta }}</span
+                    >
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="mensaje">
+                  <th mat-header-cell *matHeaderCellDef>Mensaje</th>
+                  <td mat-cell *matCellDef="let a">{{ a.mensaje }}</td>
+                </ng-container>
+                <ng-container matColumnDef="intensidad">
+                  <th mat-header-cell *matHeaderCellDef>Intensidad</th>
+                  <td mat-cell *matCellDef="let a">
+                    <span [class]="'chip-estado ' + claseIntensidad(a.intensidad)">{{
+                      a.intensidad ?? '—'
+                    }}</span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="fecha">
+                  <th mat-header-cell *matHeaderCellDef>Fecha</th>
+                  <td mat-cell *matCellDef="let a">
+                    {{ a.fechaEnvio | date: 'dd/MM/yyyy HH:mm' }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="estado">
+                  <th mat-header-cell *matHeaderCellDef>Estado</th>
+                  <td mat-cell *matCellDef="let a">
+                    @if (esPendiente(a)) {
+                      <span class="chip-estado alerta">Pendiente</span>
+                    } @else {
+                      <span class="chip-estado exito">Respondida</span>
+                    }
+                  </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="columnasAlertas"></tr>
+                <tr mat-row *matRowDef="let fila; columns: columnasAlertas"></tr>
+              </table>
+            </div>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Límites -->
+      <mat-tab label="Límites">
+        <div class="cabecera-limites">
+          <h2 class="titulo-seccion"><mat-icon>hourglass_bottom</mat-icon> Límites</h2>
+          @if (puedeConfigurar()) {
+            <a
+              mat-flat-button
+              class="boton-verde"
+              routerLink="/limites/nuevo"
+              [queryParams]="{ usuario: hijo()!.idUsuarioHijo, volver: urlVolver }"
+            >
+              <mat-icon>add</mat-icon> Nuevo límite
+            </a>
+          } @else {
+            <span class="chip-estado"
+              ><mat-icon>lock</mat-icon> No tienes permiso para configurar los límites de este
+              jugador</span
+            >
+          }
+        </div>
+        @if (limites().length === 0) {
+          <mat-card class="tarjeta" appearance="outlined">
+            <div class="estado-vacio">
+              <mat-icon>hourglass_empty</mat-icon>
+              <strong>No hay datos</strong>
+              <span
+                >{{ nombreHijo(hijo()!) }} aún no tiene límites. Crea uno para ayudarle a equilibrar
+                su tiempo.</span
+              >
+            </div>
+          </mat-card>
+        } @else {
+          <div class="grid-2">
+            @for (l of limitesOrdenados(); track l.idLimite) {
+              <mat-card
+                class="tarjeta limite"
+                [class.activo]="l.estado === 'ACTIVO'"
+                appearance="outlined"
+              >
+                <div class="limite-cabecera">
+                  <span class="chip-estado" [class.exito]="l.estado === 'ACTIVO'">{{
+                    l.estado === 'ACTIVO' ? 'Activo' : 'Inactivo'
+                  }}</span>
+                  @if (puedeConfigurar()) {
+                    <a
+                      mat-icon-button
+                      [routerLink]="['/limites/editar', l.idLimite]"
+                      [queryParams]="{ volver: urlVolver }"
+                      aria-label="Editar límite"
+                      matTooltip="Editar"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </a>
+                  }
+                </div>
+                <dl class="datos">
+                  <div>
+                    <dt>Diario</dt>
+                    <dd>{{ l.limiteHorasDiarias }} h</dd>
+                  </div>
+                  <div>
+                    <dt>Semanal</dt>
+                    <dd>{{ l.limiteHorasSemanal ?? '—' }} h</dd>
+                  </div>
+                  <div>
+                    <dt>Mensual</dt>
+                    <dd>{{ l.limiteHorasMensual ?? '—' }} h</dd>
+                  </div>
+                  <div>
+                    <dt>Horario</dt>
+                    <dd>{{ hora(l.horaInicioDia) }} – {{ hora(l.horaFinDia) }}</dd>
+                  </div>
+                  <div>
+                    <dt>Método</dt>
+                    <dd>{{ metodo(l.metodoBloqueo) }}</dd>
+                  </div>
+                  <div>
+                    <dt>Al exceder</dt>
+                    <dd>{{ accion(l.accionAlExceder) }}</dd>
+                  </div>
+                  <div>
+                    <dt>Aviso previo</dt>
+                    <dd>
+                      {{ l.minutosAvisoPrevio != null ? l.minutosAvisoPrevio + ' min' : '—' }}
+                    </dd>
+                  </div>
+                </dl>
+                <p class="dias">{{ l.diasPermitidos }} · {{ creador(l) }}</p>
+              </mat-card>
+            }
+          </div>
+        }
+      </mat-tab>
+
+      <!-- Logros y puntos (solo lectura: los reclama el hijo) -->
+      <mat-tab [label]="'Logros (' + puntos().puntosTotales + ' pts)'">
+        <h2 class="titulo-seccion"><mat-icon>emoji_events</mat-icon> Logros</h2>
+        @if (logros().length === 0) {
+          <mat-card class="tarjeta" appearance="outlined">
+            <div class="estado-vacio">
+              <mat-icon>emoji_events</mat-icon>
+              <strong>Aún no hay logros</strong>
+              <span>{{ nombreHijo(hijo()!) }} todavía no tiene progreso en los logros.</span>
+            </div>
+          </mat-card>
+        } @else {
+          <div class="grid-logros">
+            @for (r of logros(); track r.idRecompensa) {
+              <mat-card class="tarjeta logro" appearance="outlined">
+                <div class="logro-cabecera">
+                  <span class="icono-logro" [class.hecho]="r.estado !== 'EN_PROGRESO'"
+                    ><mat-icon>{{
+                      r.estado === 'EN_PROGRESO' ? 'flag' : 'military_tech'
+                    }}</mat-icon></span
+                  >
+                  <span [class]="'chip-estado ' + claseLogro(r.estado)">{{
+                    etiquetaLogro(r.estado)
+                  }}</span>
+                </div>
+                <h3>{{ r.nombreLogro }}</h3>
+                <p>{{ r.descripcionLogro }}</p>
+                <div class="fila-progreso">
+                  <small>{{ r.puntosAsignados ?? 0 }} pts</small>
+                  <small>{{ r.porcentajeProgreso ?? 0 }}%</small>
+                </div>
+                <mat-progress-bar
+                  class="progreso-ok"
+                  mode="determinate"
+                  [value]="r.porcentajeProgreso ?? 0"
+                  [attr.aria-label]="'Progreso de ' + r.nombreLogro"
+                />
+              </mat-card>
+            }
+          </div>
+        }
+      </mat-tab>
+
+      <!-- Consultas con profesionales (solo lectura; sin datos clínicos) -->
+      <mat-tab [label]="'Consultas (' + citas().length + ')'">
+        <h2 class="titulo-seccion"><mat-icon>event</mat-icon> Consultas con profesionales</h2>
+        @if (citas().length === 0) {
+          <mat-card class="tarjeta" appearance="outlined">
+            <div class="estado-vacio">
+              <mat-icon>event_busy</mat-icon>
+              <strong>Sin consultas programadas</strong>
+              <span>{{ nombreHijo(hijo()!) }} no tiene citas con un profesional.</span>
+            </div>
+          </mat-card>
+        } @else {
+          <div class="grid-2">
+            @for (c of citas(); track c.idProfesionalCliente) {
+              <app-tarjeta-cita
+                [cita]="c"
+                [destacada]="citaProxima()?.idProfesionalCliente === c.idProfesionalCliente"
+              />
+            }
+          </div>
+        }
+      </mat-tab>
+    </mat-tab-group>
+  }
+</div>

@@ -1,0 +1,64 @@
+<div class="pagina pagina-form">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>devices_other</mat-icon></span>
+    <div>
+      <h1>{{ editando ? 'Editar plataforma' : 'Nueva plataforma' }}</h1>
+      <p>Dispositivo o consola donde se juegan los videojuegos.</p>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else {
+    <mat-card class="tarjeta" appearance="outlined">
+      <form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="formulario">
+        <div class="form-2-col">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre de la plataforma</mat-label>
+            <input matInput formControlName="nombrePlataforma" />
+            @if (form.controls.nombrePlataforma.hasError('required')) {
+              <mat-error>El nombre es obligatorio</mat-error>
+            } @else if (form.controls.nombrePlataforma.hasError('maxlength')) {
+              <mat-error>Máximo 100 caracteres</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo</mat-label>
+            <mat-select formControlName="tipo">
+              @for (t of tipos; track t.valor) {
+                <mat-option [value]="t.valor">{{ t.etiqueta }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Sistema operativo</mat-label>
+            <input matInput formControlName="sistemaOperativo" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Desarrollador</mat-label>
+            <input matInput formControlName="desarrollador" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-completa">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput rows="3" formControlName="descripcion"></textarea>
+          </mat-form-field>
+
+          <mat-slide-toggle formControlName="activa" class="col-completa"
+            >Plataforma activa</mat-slide-toggle
+          >
+        </div>
+
+        <div class="botones">
+          <a mat-stroked-button routerLink="/plataformas">Cancelar</a>
+          <button mat-flat-button class="boton-verde" type="submit" [disabled]="guardando()">
+            <mat-icon>save</mat-icon> {{ guardando() ? 'Guardando…' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+</div>

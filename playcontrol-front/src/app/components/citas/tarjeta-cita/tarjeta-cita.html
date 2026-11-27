@@ -1,0 +1,50 @@
+<mat-card class="tarjeta cita" [class.destacada]="destacada()" appearance="outlined">
+  <div class="cita-cabecera">
+    <span class="icono-cita"><mat-icon>event</mat-icon></span>
+    <div class="fecha">
+      @if (fecha(); as f) {
+        <strong>{{ f | date: "EEEE d 'de' MMMM" }}</strong>
+        <span>{{ f | date: 'h:mm a' }}</span>
+      } @else {
+        <strong>Sin fecha programada</strong>
+      }
+    </div>
+    <span [class]="'chip-estado ' + claseChip()">{{ etiqueta() }}</span>
+  </div>
+
+  <dl class="datos">
+    <div>
+      <dt><mat-icon>psychology</mat-icon> Profesional</dt>
+      <dd>
+        {{ profesional() }}
+        @if (cita().especialidad) {
+          <small>{{ cita().especialidad }}</small>
+        }
+      </dd>
+    </div>
+    @if (cita().institucion) {
+      <div>
+        <dt><mat-icon>apartment</mat-icon> Institución</dt>
+        <dd>{{ cita().institucion }}</dd>
+      </div>
+    }
+    @if (cita().frecuenciaConsulta) {
+      <div>
+        <dt><mat-icon>update</mat-icon> Frecuencia</dt>
+        <dd>{{ cita().frecuenciaConsulta }}</dd>
+      </div>
+    }
+    @if (cita().horarioConsulta) {
+      <div>
+        <dt><mat-icon>schedule</mat-icon> Horario de atención</dt>
+        <dd>{{ cita().horarioConsulta }}</dd>
+      </div>
+    }
+    @if (cita().telefonoConsulta) {
+      <div>
+        <dt><mat-icon>call</mat-icon> Teléfono</dt>
+        <dd>{{ cita().telefonoConsulta }}</dd>
+      </div>
+    }
+  </dl>
+</mat-card>

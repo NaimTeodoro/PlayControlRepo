@@ -1,0 +1,89 @@
+.pagina-detalle {
+  max-width: 800px;
+}
+
+mat-card {
+  padding: 24px;
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.cabecera h2 {
+  margin-bottom: 6px;
+}
+
+.cabecera .chip-estado {
+  margin-right: 6px;
+}
+
+.mensaje {
+  font-size: 1.1rem;
+  margin: 24px 0;
+  color: var(--negro);
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 24px;
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid #ececf4;
+}
+
+.datos dt {
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+}
+
+.datos dd {
+  margin: 2px 0 0;
+  font-weight: 500;
+  color: var(--azul);
+}
+
+.botones {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+@media (max-width: 767.98px) {
+  .datos {
+    grid-template-columns: 1fr;
+  }
+}
+
+.respuesta {
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+}
+
+.historial {
+  margin-top: 8px;
+}
+
+.item-historial {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--gris);
+}
+
+.item-historial:last-child {
+  border-bottom: none;
+}
+
+.item-historial p {
+  margin: 4px 0;
+}
+
+.item-historial small {
+  display: block;
+  color: var(--texto-suave);
+}

@@ -1,0 +1,18 @@
+.pagina-form {
+  max-width: 880px;
+}
+
+.formulario {
+  padding: 24px;
+}
+
+.botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.botones button {
+  height: 44px;
+}

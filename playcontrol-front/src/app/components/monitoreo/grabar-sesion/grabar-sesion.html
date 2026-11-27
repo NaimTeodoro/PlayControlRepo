@@ -1,0 +1,139 @@
+<div class="pagina pagina-form">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>play_circle</mat-icon></span>
+    <div>
+      <h1>{{ titulo() }}</h1>
+      <p>
+        @if (modo() === 'iniciar') {
+          Elige qué vas a jugar y empieza a contar el tiempo.
+        } @else if (modo() === 'terminar') {
+          Cuéntanos cómo te sientes después de jugar.
+        } @else {
+          Ajusta cómo te sentiste en esta sesión.
+        }
+      </p>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else {
+    <mat-card class="tarjeta" appearance="outlined">
+      <form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="formulario">
+        @if (sesion(); as s) {
+          <div class="en-curso" role="status">
+            <mat-icon>sports_esports</mat-icon>
+            <span>
+              <strong>{{ s.nombreJuego ?? 'Sesión' }}</strong> · inicio
+              {{ s.fechaInicio | date: 'dd/MM/yyyy HH:mm' }} · {{ formatoDuracion(minutos()) }}
+            </span>
+          </div>
+        }
+
+        @if (modo() === 'iniciar') {
+          <div class="form-2-col">
+            <mat-form-field appearance="outline">
+              <mat-label>Videojuego</mat-label>
+              <mat-select formControlName="idVideojuego">
+                @for (j of juegos(); track j.idVideojuego) {
+                  <mat-option [value]="j.idVideojuego">{{ j.nombreJuego }}</mat-option>
+                }
+              </mat-select>
+              @if (form.controls.idVideojuego.hasError('required')) {
+                <mat-error>Elige un videojuego</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Dispositivo</mat-label>
+              <mat-select formControlName="idDispositivo">
+                <mat-option [value]="null">Sin especificar</mat-option>
+                @for (d of dispositivos(); track d.idDispositivo) {
+                  <mat-option [value]="d.idDispositivo">{{ d.modelo }}</mat-option>
+                }
+              </mat-select>
+              <mat-hint>Puedes agregar equipos en Dispositivos</mat-hint>
+            </mat-form-field>
+          </div>
+        } @else {
+          <div class="opciones-bienestar">
+            <p class="subtitulo">Estado de ánimo</p>
+            <mat-button-toggle-group formControlName="estadoAnimo" aria-label="Estado de ánimo">
+              @for (a of animos; track a.valor) {
+                <mat-button-toggle [value]="a.valor"
+                  ><mat-icon>{{ a.icono }}</mat-icon> {{ a.etiqueta }}</mat-button-toggle
+                >
+              }
+            </mat-button-toggle-group>
+          </div>
+          <div class="opciones-bienestar">
+            <p class="subtitulo">Energía física</p>
+            <mat-button-toggle-group formControlName="energiaFisica" aria-label="Energía física">
+              @for (e of energias; track e.valor) {
+                <mat-button-toggle [value]="e.valor"
+                  ><mat-icon>{{ e.icono }}</mat-icon> {{ e.etiqueta }}</mat-button-toggle
+                >
+              }
+            </mat-button-toggle-group>
+          </div>
+
+          <div class="form-2-col">
+            <mat-form-field appearance="outline">
+              <mat-label>Interrupciones</mat-label>
+              <input matInput type="number" min="0" formControlName="numeroInterrupciones" />
+              @if (form.controls.numeroInterrupciones.invalid) {
+                <mat-error>Ingresa un valor entre 0 y 100</mat-error>
+              }
+            </mat-form-field>
+            <span></span>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Efectos después de jugar</mat-label>
+              <textarea matInput rows="2" formControlName="efectosPostJuego"></textarea>
+              @if (form.controls.efectosPostJuego.hasError('maxlength')) {
+                <mat-error>Máximo 500 caracteres</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Anotaciones</mat-label>
+              <textarea matInput rows="2" formControlName="anotacionesUsuario"></textarea>
+              @if (form.controls.anotacionesUsuario.hasError('maxlength')) {
+                <mat-error>Máximo 500 caracteres</mat-error>
+              }
+            </mat-form-field>
+          </div>
+        }
+
+        <div class="botones">
+          <button mat-stroked-button type="button" (click)="volver()">Cancelar</button>
+          <button mat-flat-button class="boton-verde" type="submit" [disabled]="guardando()">
+            <mat-icon>{{
+              modo() === 'iniciar' ? 'play_arrow' : modo() === 'terminar' ? 'stop' : 'save'
+            }}</mat-icon>
+            {{
+              guardando()
+                ? 'Guardando…'
+                : modo() === 'iniciar'
+                  ? 'Iniciar sesión'
+                  : modo() === 'terminar'
+                    ? 'Terminar sesión'
+                    : 'Guardar'
+            }}
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+</div>

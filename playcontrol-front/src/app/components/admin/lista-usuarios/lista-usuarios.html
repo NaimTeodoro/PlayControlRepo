@@ -1,0 +1,160 @@
+<div class="pagina">
+  <header class="encabezado-pagina">
+    <span class="icono-seccion"><mat-icon>manage_accounts</mat-icon></span>
+    <div>
+      <h1>Usuarios</h1>
+      <p>Todas las cuentas de PlayControl. Busca, filtra por rol, edita o da de alta nuevos usuarios.</p>
+    </div>
+    <div class="acciones">
+      <a mat-flat-button class="boton-verde" routerLink="/usuarios/nuevo"
+        ><mat-icon>person_add</mat-icon> Nuevo usuario</a
+      >
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else {
+    <!-- Resumen por rol -->
+    <div class="grid-kpi">
+      @for (r of conteoPorRol(); track r.valor) {
+        <mat-card class="tarjeta kpi" appearance="outlined">
+          <span
+            class="icono-kpi"
+            [class.azul]="r.valor === 'ROLE_ADMIN'"
+            [class.verde]="r.valor === 'ROLE_JUGADOR'"
+            ><mat-icon>{{ r.icono }}</mat-icon></span
+          >
+          <div>
+            <span class="valor">{{ r.total }}</span><span class="etiqueta">{{ r.etiqueta }}</span>
+          </div>
+        </mat-card>
+      }
+    </div>
+
+    <div class="filtros">
+      <mat-form-field appearance="outline" class="buscador" subscriptSizing="dynamic">
+        <mat-label>Buscar usuario</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [value]="busqueda()" (input)="buscar($event)" />
+      </mat-form-field>
+      <mat-button-toggle-group
+        [value]="filtroRol()"
+        (change)="filtroRol.set($event.value)"
+        aria-label="Filtrar por rol"
+        hideSingleSelectionIndicator
+      >
+        <mat-button-toggle value="TODOS">Todos</mat-button-toggle>
+        @for (r of roles; track r.valor) {
+          <mat-button-toggle [value]="r.valor">{{ r.etiqueta }}</mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+    </div>
+
+    <div class="tabla-contenedor">
+      @if (filtrados().length === 0) {
+        <div class="estado-vacio">
+          <mat-icon>person_search</mat-icon>
+          <strong>No hay datos</strong>
+          <span>No encontramos usuarios con ese filtro.</span>
+        </div>
+      } @else {
+        <div class="scroll-x">
+          <table mat-table [dataSource]="datos">
+            <ng-container matColumnDef="usuario">
+              <th mat-header-cell *matHeaderCellDef>Usuario</th>
+              <td mat-cell *matCellDef="let u">
+                <span class="usuario">
+                  <span class="avatar" aria-hidden="true">{{
+                    u.username.charAt(0).toUpperCase()
+                  }}</span>
+                  <span>
+                    <strong>{{ u.username }}</strong>
+                    <small>{{ u.nombre }} {{ u.apellido }}</small>
+                  </span>
+                </span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef>Correo</th>
+              <td mat-cell *matCellDef="let u">{{ u.email ?? '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="rol">
+              <th mat-header-cell *matHeaderCellDef>Rol</th>
+              <td mat-cell *matCellDef="let u">
+                <span class="chip-estado">{{ etiquetaRol(u) }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="estado">
+              <th mat-header-cell *matHeaderCellDef>Estado</th>
+              <td mat-cell *matCellDef="let u">
+                <span
+                  class="chip-estado"
+                  [class.exito]="u.estado === 'ACTIVO' && u.enabled !== false"
+                  [class.peligro]="u.enabled === false"
+                >
+                  {{ u.enabled === false ? 'DESHABILITADO' : (u.estado ?? '—') }}
+                </span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="registro">
+              <th mat-header-cell *matHeaderCellDef>Registro</th>
+              <td mat-cell *matCellDef="let u">
+                {{ u.fechaRegistro ? (u.fechaRegistro | date: 'dd/MM/yyyy') : '—' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="acceso">
+              <th mat-header-cell *matHeaderCellDef>Último acceso</th>
+              <td mat-cell *matCellDef="let u">
+                {{ u.ultimoAcceso ? (u.ultimoAcceso | date: 'dd/MM/yyyy HH:mm') : '—' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef>
+                <span class="visually-hidden">Acciones</span>
+              </th>
+              <td mat-cell *matCellDef="let u">
+                <div class="acciones-fila">
+                  <a
+                    mat-icon-button
+                    [routerLink]="['/usuarios/editar', u.idUsuario]"
+                    aria-label="Editar usuario"
+                    matTooltip="Editar"
+                    ><mat-icon>edit</mat-icon></a
+                  >
+                  <button
+                    mat-icon-button
+                    (click)="eliminar(u)"
+                    aria-label="Eliminar usuario"
+                    matTooltip="Eliminar"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+            <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
+          </table>
+        </div>
+      }
+      <mat-paginator
+        [pageSizeOptions]="[10, 25, 50]"
+        [pageSize]="10"
+        [hidden]="filtrados().length === 0"
+        aria-label="Paginación de usuarios"
+      />
+    </div>
+  }
+</div>

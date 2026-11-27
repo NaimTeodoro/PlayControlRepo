@@ -1,0 +1,109 @@
+<div class="fondo-auth">
+  <mat-card class="tarjeta-registro" appearance="outlined">
+    <div class="cabecera">
+      <span class="logo"><mat-icon>sports_esports</mat-icon></span>
+      <div>
+        <h1>Crea tu cuenta</h1>
+        <p>Únete a PlayControl y juega con equilibrio.</p>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="registrar()" novalidate>
+      <!-- Selección de rol -->
+      <span class="etiqueta-rol" id="etiqueta-rol">¿Quién eres?</span>
+      <mat-button-toggle-group
+        formControlName="rol"
+        class="selector-rol"
+        aria-labelledby="etiqueta-rol"
+      >
+        @for (rol of roles; track rol.valor) {
+          <mat-button-toggle [value]="rol.valor">
+            <mat-icon>{{ rol.icono }}</mat-icon>
+            {{ rol.etiqueta }}
+          </mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+
+      <div class="form-2-col">
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="nombre" autocomplete="given-name" />
+          @if (form.controls.nombre.hasError('required')) {
+            <mat-error>El nombre es obligatorio</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Apellido</mat-label>
+          <input matInput formControlName="apellido" autocomplete="family-name" />
+          @if (form.controls.apellido.hasError('required')) {
+            <mat-error>El apellido es obligatorio</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Usuario</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input matInput formControlName="username" autocomplete="username" />
+          @if (form.controls.username.hasError('required')) {
+            <mat-error>El usuario es obligatorio</mat-error>
+          } @else if (form.controls.username.hasError('minlength')) {
+            <mat-error>Mínimo 3 caracteres</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Correo electrónico</mat-label>
+          <mat-icon matPrefix>mail</mat-icon>
+          <input matInput type="email" formControlName="email" autocomplete="email" />
+          @if (form.controls.email.hasError('required')) {
+            <mat-error>El correo es obligatorio</mat-error>
+          } @else if (form.controls.email.hasError('email')) {
+            <mat-error>Correo no válido</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-completa">
+          <mat-label>Contraseña</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input
+            matInput
+            formControlName="password"
+            [type]="verPassword() ? 'text' : 'password'"
+            autocomplete="new-password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="verPassword.set(!verPassword())"
+            [attr.aria-label]="verPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          >
+            <mat-icon>{{ verPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-hint>Mínimo 6 caracteres</mat-hint>
+          @if (form.controls.password.hasError('required')) {
+            <mat-error>La contraseña es obligatoria</mat-error>
+          } @else if (form.controls.password.hasError('minlength')) {
+            <mat-error>Mínimo 6 caracteres</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <button
+        mat-flat-button
+        class="boton-verde boton-enviar"
+        type="submit"
+        [disabled]="cargando()"
+      >
+        @if (cargando()) {
+          <mat-spinner diameter="22" />
+        } @else {
+          Crear cuenta
+        }
+      </button>
+    </form>
+
+    <p class="enlace">¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></p>
+  </mat-card>
+</div>

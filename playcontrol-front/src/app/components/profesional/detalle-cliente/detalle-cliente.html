@@ -1,0 +1,189 @@
+<div class="pagina pagina-detalle">
+  <header class="encabezado-pagina">
+    <a mat-icon-button routerLink="/clientes" aria-label="Volver a clientes"
+      ><mat-icon>arrow_back</mat-icon></a
+    >
+    <div><h1>Ficha del cliente</h1></div>
+    @if (cliente(); as c) {
+      <div class="acciones">
+        <a
+          mat-flat-button
+          class="boton-verde"
+          [routerLink]="['/clientes/editar', c.idProfesionalCliente]"
+        >
+          <mat-icon>edit</mat-icon> Editar
+        </a>
+      </div>
+    }
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando"><mat-spinner diameter="48" /></div>
+  } @else if (errorCarga()) {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio estado-error" role="alert">
+        <mat-icon>cloud_off</mat-icon>
+        <strong>No pudimos cargar la información</strong>
+        <span>Revisa tu conexión o que el servidor esté disponible.</span>
+        <button mat-stroked-button type="button" (click)="recargar()">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    </mat-card>
+  } @else if (cliente(); as c) {
+    <mat-card class="tarjeta cabecera" appearance="outlined">
+      <span class="icono-seccion"><mat-icon>person</mat-icon></span>
+      <div>
+        <h2>{{ nombreCliente(c) }}</h2>
+        <span class="chip-estado" [class.exito]="c.estado === 'ACTIVO'">{{
+          estado(c.estado)
+        }}</span>
+        <span class="chip-estado">Desde {{ c.fechaAsociacion | date: 'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="proxima">
+        <mat-icon>event</mat-icon>
+        <div>
+          <small>Próxima consulta</small>
+          <strong>{{
+            c.proximaConsulta ? (c.proximaConsulta | date: 'dd/MM/yyyy HH:mm') : 'Sin programar'
+          }}</strong>
+        </div>
+      </div>
+    </mat-card>
+
+    <div class="grid-2 bloques">
+      <mat-card class="tarjeta bloque" appearance="outlined">
+        <h3><mat-icon>medical_information</mat-icon> Diagnóstico</h3>
+        <p>{{ c.diagnostico ?? 'Sin diagnóstico registrado' }}</p>
+      </mat-card>
+      <mat-card class="tarjeta bloque" appearance="outlined">
+        <h3><mat-icon>checklist</mat-icon> Plan de tratamiento</h3>
+        <p>{{ c.planTratamiento ?? 'Sin plan registrado' }}</p>
+      </mat-card>
+      <mat-card class="tarjeta bloque" appearance="outlined">
+        <h3><mat-icon>update</mat-icon> Frecuencia de consulta</h3>
+        <p>{{ c.frecuenciaConsulta ?? 'Sin definir' }}</p>
+      </mat-card>
+      <mat-card class="tarjeta bloque" appearance="outlined">
+        <h3><mat-icon>edit_note</mat-icon> Notas</h3>
+        <p>{{ c.notas ?? 'Sin notas' }}</p>
+      </mat-card>
+    </div>
+
+    <h2 class="titulo-seccion">
+      <mat-icon>sports_esports</mat-icon> Datos de juego de {{ c.nombreJugador }}
+    </h2>
+    @if (cargandoJuego()) {
+      <div class="cargando"><mat-spinner diameter="40" /></div>
+    } @else if (errorJuego()) {
+      <mat-card class="tarjeta" appearance="outlined">
+        <div class="estado-vacio estado-error" role="alert">
+          <mat-icon>cloud_off</mat-icon>
+          <strong>No pudimos cargar los datos de juego</strong>
+        </div>
+      </mat-card>
+    } @else if (resumen(); as r) {
+      <div class="grid-kpi">
+        <mat-card class="tarjeta kpi" appearance="outlined">
+          <span class="icono-kpi azul"><mat-icon>today</mat-icon></span>
+          <div>
+            <span class="valor">{{ formatoDuracion(r.minutosHoy) }}</span
+            ><span class="etiqueta">Hoy</span>
+          </div>
+        </mat-card>
+        <mat-card class="tarjeta kpi" appearance="outlined">
+          <span class="icono-kpi"><mat-icon>date_range</mat-icon></span>
+          <div>
+            <span class="valor">{{ formatoDuracion(r.minutosSemana) }}</span
+            ><span class="etiqueta">Esta semana</span>
+          </div>
+        </mat-card>
+        <mat-card class="tarjeta kpi" appearance="outlined">
+          <span class="icono-kpi"><mat-icon>calendar_month</mat-icon></span>
+          <div>
+            <span class="valor">{{ formatoDuracion(r.minutosMes) }}</span
+            ><span class="etiqueta">Este mes</span>
+          </div>
+        </mat-card>
+        <mat-card class="tarjeta kpi" appearance="outlined">
+          <span class="icono-kpi verde"><mat-icon>notifications_active</mat-icon></span>
+          <div>
+            <span class="valor">{{ pendientes() }}</span
+            ><span class="etiqueta">Alertas pendientes</span>
+          </div>
+        </mat-card>
+      </div>
+
+      <mat-card class="tarjeta limite" appearance="outlined">
+        @if (r.porcentajeHoy !== null && r.limiteDiarioMinutos !== null) {
+          <strong>Límite diario: {{ formatoDuracion(r.limiteDiarioMinutos) }}</strong>
+          <mat-progress-bar
+            [class]="'barra-gruesa ' + claseProgreso(r.porcentajeHoy)"
+            mode="determinate"
+            [value]="r.porcentajeHoy > 100 ? 100 : r.porcentajeHoy"
+          />
+          <small>{{ r.porcentajeHoy }}% del límite usado hoy</small>
+        } @else {
+          <span>Sin límite configurado</span>
+        }
+        @if (r.sesionEnCurso) {
+          <span class="chip-estado exito">Jugando ahora: {{ r.sesionEnCurso.nombreJuego }}</span>
+        }
+      </mat-card>
+
+      <div class="grid-2 bloques">
+        <mat-card class="tarjeta bloque" appearance="outlined">
+          <h3><mat-icon>history</mat-icon> Últimas sesiones</h3>
+          @if (sesiones().length === 0) {
+            <p>Aún no hay sesiones registradas.</p>
+          } @else {
+            <ul class="lista-mini">
+              @for (s of sesiones(); track s.idSesion) {
+                <li>
+                  <div>
+                    <strong>{{ s.nombreJuego }}</strong>
+                    <small>{{ s.fechaInicio | date: 'dd/MM/yyyy HH:mm' }}</small>
+                  </div>
+                  <span class="chip-estado" [class.peligro]="s.respetoLimites === false">{{
+                    formatoDuracion(minutosSesion(s))
+                  }}</span>
+                </li>
+              }
+            </ul>
+          }
+        </mat-card>
+        <mat-card class="tarjeta bloque" appearance="outlined">
+          <h3><mat-icon>notifications</mat-icon> Alertas del jugador</h3>
+          @if (alertas().length === 0) {
+            <p>Sin alertas.</p>
+          } @else {
+            <ul class="lista-mini">
+              @for (a of alertas(); track a.idAlerta) {
+                <li>
+                  <div>
+                    <strong>{{ infoTipoAlerta(a.tipoAlerta).etiqueta }}</strong>
+                    <small>{{ a.fechaEnvio | date: 'dd/MM/yyyy HH:mm' }} · {{ a.mensaje }}</small>
+                  </div>
+                  <span
+                    class="chip-estado"
+                    [class.alerta]="esPendiente(a)"
+                    [class.exito]="!esPendiente(a)"
+                    >{{ esPendiente(a) ? 'Pendiente' : 'Respondida' }}</span
+                  >
+                </li>
+              }
+            </ul>
+          }
+        </mat-card>
+      </div>
+    }
+  } @else {
+    <mat-card class="tarjeta" appearance="outlined">
+      <div class="estado-vacio">
+        <mat-icon>search_off</mat-icon>
+        <strong>No se encontró el cliente</strong>
+        <a mat-stroked-button routerLink="/clientes">Volver a clientes</a>
+      </div>
+    </mat-card>
+  }
+</div>

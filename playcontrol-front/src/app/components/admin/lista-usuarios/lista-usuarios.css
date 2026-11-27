@@ -1,0 +1,35 @@
+.filtros {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 24px 0 16px;
+}
+
+.buscador {
+  flex: 1;
+  min-width: 260px;
+  max-width: 380px;
+}
+
+.usuario {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.usuario small {
+  display: block;
+  color: var(--texto-suave);
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--azul);
+  color: var(--verde);
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
